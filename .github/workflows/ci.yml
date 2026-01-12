@@ -32,7 +32,11 @@ jobs:
 
       - name: Ruff (lint)
         run: |
-          ruff check custom_components/vattenfall_tijdprijs
+          if [ -d custom_components/vattenfall_tijdprijs ]; then
+            ruff check custom_components/vattenfall_tijdprijs
+          else
+            ruff check .
+          fi
 
       - name: Hassfest validation
         run: |
