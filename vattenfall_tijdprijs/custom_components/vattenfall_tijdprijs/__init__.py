@@ -1,33 +1,25 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
-from homeassistant.components.sensor import SensorEntity
-from .const import *
+from __future__ import annotations
 
-async def async_setup_entry(hass, entry, async_add_entities):
-    data = entry.data
+from typing import Any
 
-    sensors = [
-        PriceSensor("Import prijs", data[CONF_IMPORT_PRICE], DEFAULT_UNIT_PRICE),
-        PriceSensor("Terugleververgoeding", data[CONF_EXPORT_PRICE], DEFAULT_UNIT_PRICE),
-        PriceSensor("Terugleverkosten", data[CONF_EXPORT_COSTS], DEFAULT_UNIT_PRICE),
-
-        FixedCostSensor("Vaste leveringskosten", data[CONF_FIXED_DELIVERY]),
-        FixedCostSensor("Vaste netbeheerkosten", data[CONF_FIXED_GRID]),
-        FixedCostSensor("Vaste terugleverkosten", data[CONF_FIXED_EXPORT]),
-    ]
-
-    async_add_entities(sensors)
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 
 
-class PriceSensor(SensorEntity):
-    def __init__(self, name, value, unit):
-        self._attr_name = name
-        self._attr_native_value = value
-        self._attr_native_unit_of_measurement = unit
+async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
+    """Set up the Vattenfall Tijdprijs integration from YAML (not used)."""
+    # This integration is configured via config entries only.
+    return True
 
 
-class FixedCostSensor(SensorEntity):
-    def __init__(self, name, value):
-        self._attr_name = name
-        self._attr_native_value = value
-        self._attr_native_unit_of_measurement = DEFAULT_UNIT_FIXED
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Set up Vattenfall Tijdprijs from a config entry."""
+    await hass.config_entries.async_forward_entry_setups(entry, ["sensor"])
+    return True
+
+
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Unload a Vattenfall Tijdprijs config entry."""
+    return await hass.config_entries.async_unload_platforms(entry, ["sensor"])
