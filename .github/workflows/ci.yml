@@ -34,10 +34,11 @@ jobs:
             ruff check .
           fi
 
-      - name: Hassfest validation
+      - name: Hassfest validation Download
         uses: home-assistant/actions/hassfest@master
 
       - name: HACS validation
         uses: hacs/action@main
         with:
           category: integration
+          repository: ${{ github.repository }}
