@@ -121,7 +121,7 @@ class TestAsyncSetupEntry:
 
     async def test_setup_entry_sensor_names(self):
         """Test that setup_entry creates sensors with correct names."""
-        hass = MagicMock(spec=HomeAssistant)
+        hass = MagicMock()
         entry = MagicMock()
         entry.data = {
             CONF_EXPORT_COMPENSATION: 0.10,
@@ -146,7 +146,7 @@ class TestAsyncSetupEntry:
 
     async def test_setup_entry_sensor_values(self):
         """Test that setup_entry creates sensors with correct values."""
-        hass = MagicMock(spec=HomeAssistant)
+        hass = MagicMock()
         entry = MagicMock()
         
         test_values = {
