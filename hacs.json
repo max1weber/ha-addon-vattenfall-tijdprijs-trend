@@ -3,7 +3,5 @@
   "render_readme": true,
   "content_in_root": true,
   "filename": "vattenfall_tijdprijs",
-  "domains": ["sensor"],
-  "homeassistant": "2024.1.0",
-  "iot_class": "cloud_polling"
+  "homeassistant": "2024.1.0"
 }
