@@ -46,7 +46,7 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             self._data.update(user_input)
-            return await self.async_step_fixed_costs()
+            return await self.async_step_consumption_sensor()
 
         schema = vol.Schema(
             {
