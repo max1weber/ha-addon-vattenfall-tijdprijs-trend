@@ -1,0 +1,38 @@
+codecov:
+  require_ci_to_pass: true
+  precision: 2
+  max_report_age: 24
+  
+coverage:
+  precision: 2
+  round: down
+  range:
+    - 50.0
+    - 100.0
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: true
+  require_base: true
+  show_carryforward_flags: false
+
+ignore:
+  - "tests"
+  - "**/__pycache__"
+  - "**/site-packages"
+
+flags:
+  unittests:
+    carryforward: true
+
+status:
+  project:
+    default:
+      target: 50
+      threshold: 5
+      base: auto
+  patch:
+    default:
+      target: 80
+      threshold: 5

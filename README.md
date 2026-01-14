@@ -3,6 +3,8 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/release/max1weber/ha-addon-vattenfall-tijdprijs-trend.svg)](https://github.com/max1weber/ha-addon-vattenfall-tijdprijs-trend/releases)
 [![License](https://img.shields.io/github/license/max1weber/ha-addon-vattenfall-tijdprijs-trend.svg)](LICENSE)
+[![codecov](https://codecov.io/gh/max1weber/ha-addon-vattenfall-tijdprijs-trend/branch/main/graph/badge.svg)](https://codecov.io/gh/max1weber/ha-addon-vattenfall-tijdprijs-trend)
+[![Tests](https://github.com/max1weber/ha-addon-vattenfall-tijdprijs-trend/actions/workflows/tests.yml/badge.svg)](https://github.com/max1weber/ha-addon-vattenfall-tijdprijs-trend/actions/workflows/tests.yml)
 
 Home Assistant integratie voor Vattenfall TijdPrijs dynamische energieprijzen.
 
