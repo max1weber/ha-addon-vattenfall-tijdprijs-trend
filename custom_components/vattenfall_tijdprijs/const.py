@@ -5,7 +5,13 @@
 # Default values
 DEFAULT_NAME = "Vattenfall Tijdprijs"
 
-
+# Default price values (€)
+DEFAULT_IMPORT_PRICE = 0.30
+DEFAULT_EXPORT_PRICE = 0.10
+DEFAULT_EXPORT_COSTS = 0.03
+DEFAULT_FIXED_DELIVERY = 0.50
+DEFAULT_FIXED_GRID = 0.60
+DEFAULT_FIXED_EXPORT = 0.15
 
 DOMAIN = "vattenfall_tijdprijs"
 NAME = "Vattenfall Tijdprijs"
