@@ -30,6 +30,10 @@ DEFAULT_EXPORT_COSTS = 0.055781
 # Default annual consumption for tier calculation
 DEFAULT_ANNUAL_CONSUMPTION = 3000
 
+# Unit constants
+DEFAULT_UNIT_PRICE = "€/kWh"
+DEFAULT_UNIT_FIXED = "€/dag"
+
 # Usage tiers (kWh per year)
 USAGE_TIERS = [0, 2900, 10000, 50000]
 
