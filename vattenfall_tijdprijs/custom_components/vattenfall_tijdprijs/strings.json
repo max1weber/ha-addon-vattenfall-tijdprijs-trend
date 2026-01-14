@@ -1,0 +1,19 @@
+{
+  "title": "Vattenfall Tijdprijs",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Tarieven instellen",
+        "description": "Alle bedragen zijn inclusief btw.",
+        "data": {
+          "import_price": "Importprijs (€/kWh)",
+          "export_price": "Terugleververgoeding (€/kWh)",
+          "export_costs": "Terugleverkosten (€/kWh)",
+          "fixed_delivery_costs": "Vaste leveringskosten (€/dag)",
+          "fixed_grid_costs": "Vaste netbeheerkosten (€/dag)",
+          "fixed_export_costs": "Vaste terugleverkosten (€/dag)"
+        }
+      }
+    }
+  }
+}
