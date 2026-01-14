@@ -3,23 +3,48 @@
   "config": {
     "step": {
       "user": {
-        "title": "Tarieven instellen",
-        "description": "Alle bedragen zijn inclusief btw.",
+        "title": "Jaarverbruik configureren",
+        "description": "Configureer uw jaarlijks elektriciteitsverbruik voor correcte tariefberekening.",
         "data": {
-          "import_price": "Importprijs",
-          "export_price": "Terugleververgoeding",
-          "export_costs": "Terugleverkosten",
-          "fixed_delivery_costs": "Vaste leveringskosten",
-          "fixed_grid_costs": "Vaste netbeheerkosten",
-          "fixed_export_costs": "Vaste terugleverkosten"
+          "use_consumption_sensor": "Gebruik verbruikssensor",
+          "annual_consumption": "Geschat jaarverbruik"
         },
         "data_description": {
-          "import_price": "Dynamische prijs voor stroomverbruik (€/kWh)",
-          "export_price": "Vergoeding voor teruggeleverde stroom (€/kWh)",
-          "export_costs": "Kosten voor het terugleveren van stroom (€/kWh)",
-          "fixed_delivery_costs": "Dagelijkse vaste kosten voor levering (€/dag)",
-          "fixed_grid_costs": "Dagelijkse netbeheerkosten (€/dag)",
-          "fixed_export_costs": "Dagelijkse vaste kosten voor teruglevering (€/dag)"
+          "use_consumption_sensor": "Gebruik een bestaande sensor voor jaarverbruik tracking",
+          "annual_consumption": "Verwacht jaarlijks verbruik in kWh (bepaalt uw tariefschijf)"
+        }
+      },
+      "consumption_sensor": {
+        "title": "Verbruikssensor selecteren",
+        "description": "Selecteer de sensor die uw jaarlijks verbruik bijhoudt.",
+        "data": {
+          "consumption_sensor": "Verbruikssensor"
+        }
+      },
+      "fixed_costs": {
+        "title": "Vaste kosten configureren",
+        "description": "Configureer de vaste dagelijkse kosten (in €/dag). Alle bedragen zijn inclusief BTW.",
+        "data": {
+          "fixed_delivery_costs": "Vaste leveringskosten",
+          "fixed_tax_reduction": "Vermindering energiebelasting",
+          "fixed_grid_costs": "Systeembeheerkosten"
+        },
+        "data_description": {
+          "fixed_delivery_costs": "Dagelijkse vaste kosten voor levering",
+          "fixed_tax_reduction": "Dagelijkse korting op energiebelasting (negatief bedrag = korting)",
+          "fixed_grid_costs": "Dagelijkse kosten voor systeembeheer (Enexis 3x25)"
+        }
+      },
+      "export": {
+        "title": "Teruglever tarieven",
+        "description": "Configureer de teruglever vergoeding en kosten. Alle bedragen zijn inclusief BTW.",
+        "data": {
+          "export_compensation": "Terugleververgoeding",
+          "export_costs": "Terugleverkosten"
+        },
+        "data_description": {
+          "export_compensation": "Jaarlijkse vergoeding voor teruggeleverde stroom (BTW-vrij tarief)",
+          "export_costs": "Kosten voor het terugleveren van stroom"
         }
       }
     }
