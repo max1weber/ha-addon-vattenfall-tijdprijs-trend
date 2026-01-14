@@ -1,7 +1,5 @@
 {
   "name": "Vattenfall Tijdprijs Trend",
   "render_readme": true,
-  "content_in_root": true,
-  "filename": "vattenfall_tijdprijs",
   "homeassistant": "2024.1.0"
 }
