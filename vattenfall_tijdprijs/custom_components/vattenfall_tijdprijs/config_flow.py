@@ -14,14 +14,16 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 data=user_input,
             )
 
-        schema = vol.Schema({
-            vol.Required(CONF_IMPORT_PRICE): vol.Coerce(float),
-            vol.Required(CONF_EXPORT_PRICE): vol.Coerce(float),
-            vol.Required(CONF_EXPORT_COSTS): vol.Coerce(float),
+        price_validator = vol.All(vol.Coerce(float), vol.Range(min=0, max=1000))
 
-            vol.Required(CONF_FIXED_DELIVERY): vol.Coerce(float),
-            vol.Required(CONF_FIXED_GRID): vol.Coerce(float),
-            vol.Required(CONF_FIXED_EXPORT): vol.Coerce(float),
+        schema = vol.Schema({
+            vol.Required(CONF_IMPORT_PRICE): price_validator,
+            vol.Required(CONF_EXPORT_PRICE): price_validator,
+            vol.Required(CONF_EXPORT_COSTS): price_validator,
+
+            vol.Required(CONF_FIXED_DELIVERY): price_validator,
+            vol.Required(CONF_FIXED_GRID): price_validator,
+            vol.Required(CONF_FIXED_EXPORT): price_validator,
         })
 
         return self.async_show_form(

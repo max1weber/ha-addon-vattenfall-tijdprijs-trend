@@ -11,9 +11,6 @@ DOMAIN = "vattenfall_tijdprijs"
 NAME = "Vattenfall Tijdprijs"
 VERSION = "1.0.0"
 
-# API Configuration
-API_TIMEOUT = 30
-UPDATE_INTERVAL = 900  # 15 minutes in seconds
 CONF_IMPORT_PRICE = "import_price"
 CONF_EXPORT_PRICE = "export_price"
 CONF_EXPORT_COSTS = "export_costs"
