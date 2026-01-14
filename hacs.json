@@ -1,0 +1,9 @@
+{
+  "name": "Vattenfall Tijdprijs Trend",
+  "render_readme": true,
+  "content_in_root": true,
+  "domains": ["sensor"],
+  "homeassistant": "2024.1.0",
+  "iot_class": "cloud_polling"
+}
+

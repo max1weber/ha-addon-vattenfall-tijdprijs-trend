@@ -1,0 +1,10 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure tariffs",
+        "description": "All prices are VAT included."
+      }
+    }
+  }
+}

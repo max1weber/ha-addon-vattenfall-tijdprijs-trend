@@ -1,0 +1,11 @@
+{
+  "domain": "vattenfall_tijdprijs",
+  "name": "Vattenfall Tijdprijs",
+  "codeowners": ["@max1weber"],
+  "config_flow": true,
+  "documentation": "https://github.com/max1weber/ha-addon-vattenfall-tijdprijs-trend",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/max1weber/ha-addon-vattenfall-tijdprijs-trend/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}
