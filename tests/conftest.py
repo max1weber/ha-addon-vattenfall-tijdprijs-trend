@@ -4,14 +4,12 @@
 
 import pytest
 from unittest.mock import MagicMock
-from homeassistant.core import HomeAssistant
-from homeassistant.setup import async_setup_component
 
 
 @pytest.fixture
 def hass():
     """Return a mock Home Assistant instance."""
-    mock_hass = MagicMock(spec=HomeAssistant)
+    mock_hass = MagicMock()
     mock_hass.data = {}
     return mock_hass
 

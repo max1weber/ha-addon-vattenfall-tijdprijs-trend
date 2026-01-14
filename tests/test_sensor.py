@@ -4,8 +4,6 @@
 
 import pytest
 from unittest.mock import MagicMock, patch, AsyncMock
-from homeassistant.components.sensor import SensorEntity
-from homeassistant.core import HomeAssistant
 
 from custom_components.vattenfall_tijdprijs.sensor import (
     async_setup_entry,
@@ -98,7 +96,7 @@ class TestAsyncSetupEntry:
 
     async def test_setup_entry_creates_all_sensors(self):
         """Test that setup_entry creates all expected sensors."""
-        hass = MagicMock(spec=HomeAssistant)
+        hass = MagicMock()
         entry = MagicMock()
         entry.data = {
             CONF_EXPORT_COMPENSATION: 0.10,
