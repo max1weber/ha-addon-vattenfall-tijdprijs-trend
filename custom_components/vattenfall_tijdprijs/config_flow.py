@@ -28,6 +28,7 @@ from .const import (
     DEFAULT_FIXED_TAX_REDUCTION,
     DOMAIN,
 )
+from .pricing_data import DEFAULT_LEVERING_PRICES, PERIOD_LABELS
 
 
 class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -106,7 +107,8 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle fixed costs configuration."""
         if user_input is not None:
             self._data.update(user_input)
-            return await self.async_step_export()
+            # Ask if user wants to configure custom pricing
+            return await self.async_step_pricing_choice()
 
         schema = vol.Schema(
             {
@@ -152,6 +154,205 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="fixed_costs",
             data_schema=schema,
+        )
+
+    async def async_step_pricing_choice(self, user_input=None):
+        """Ask if user wants to configure custom pricing."""
+        if user_input is not None:
+            if user_input.get("configure_pricing", False):
+                return await self.async_step_pricing_summer_normal()
+            else:
+                return await self.async_step_export()
+
+        schema = vol.Schema(
+            {
+                vol.Required("configure_pricing", default=False): cv.boolean,
+            }
+        )
+
+        return self.async_show_form(
+            step_id="pricing_choice",
+            data_schema=schema,
+        )
+
+    async def async_step_pricing_summer_normal(self, user_input=None):
+        """Configure summer normal period pricing."""
+        if user_input is not None:
+            self._data.update(user_input)
+            return await self.async_step_pricing_summer_offpeak_weekday()
+
+        default_prices = DEFAULT_LEVERING_PRICES["summer_normal"]
+        schema = vol.Schema(
+            {
+                vol.Required("summer_normal_levering_0", default=default_prices[0]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("summer_normal_levering_1", default=default_prices[1]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("summer_normal_levering_2", default=default_prices[2]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("summer_normal_levering_3", default=default_prices[3]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+            }
+        )
+
+        return self.async_show_form(
+            step_id="pricing_summer_normal",
+            data_schema=schema,
+            description_placeholders={"period": PERIOD_LABELS["summer_normal"]},
+        )
+
+    async def async_step_pricing_summer_offpeak_weekday(self, user_input=None):
+        """Configure summer off-peak weekday pricing."""
+        if user_input is not None:
+            self._data.update(user_input)
+            return await self.async_step_pricing_summer_offpeak_weekend()
+
+        default_prices = DEFAULT_LEVERING_PRICES["summer_offpeak_weekday"]
+        schema = vol.Schema(
+            {
+                vol.Required("summer_offpeak_weekday_levering_0", default=default_prices[0]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("summer_offpeak_weekday_levering_1", default=default_prices[1]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("summer_offpeak_weekday_levering_2", default=default_prices[2]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("summer_offpeak_weekday_levering_3", default=default_prices[3]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+            }
+        )
+
+        return self.async_show_form(
+            step_id="pricing_summer_offpeak_weekday",
+            data_schema=schema,
+            description_placeholders={"period": PERIOD_LABELS["summer_offpeak_weekday"]},
+        )
+
+    async def async_step_pricing_summer_offpeak_weekend(self, user_input=None):
+        """Configure summer off-peak weekend pricing."""
+        if user_input is not None:
+            self._data.update(user_input)
+            return await self.async_step_pricing_winter_normal()
+
+        default_prices = DEFAULT_LEVERING_PRICES["summer_offpeak_weekend"]
+        schema = vol.Schema(
+            {
+                vol.Required("summer_offpeak_weekend_levering_0", default=default_prices[0]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("summer_offpeak_weekend_levering_1", default=default_prices[1]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("summer_offpeak_weekend_levering_2", default=default_prices[2]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("summer_offpeak_weekend_levering_3", default=default_prices[3]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+            }
+        )
+
+        return self.async_show_form(
+            step_id="pricing_summer_offpeak_weekend",
+            data_schema=schema,
+            description_placeholders={"period": PERIOD_LABELS["summer_offpeak_weekend"]},
+        )
+
+    async def async_step_pricing_winter_normal(self, user_input=None):
+        """Configure winter normal period pricing."""
+        if user_input is not None:
+            self._data.update(user_input)
+            return await self.async_step_pricing_winter_offpeak_day()
+
+        default_prices = DEFAULT_LEVERING_PRICES["winter_normal"]
+        schema = vol.Schema(
+            {
+                vol.Required("winter_normal_levering_0", default=default_prices[0]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("winter_normal_levering_1", default=default_prices[1]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("winter_normal_levering_2", default=default_prices[2]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("winter_normal_levering_3", default=default_prices[3]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+            }
+        )
+
+        return self.async_show_form(
+            step_id="pricing_winter_normal",
+            data_schema=schema,
+            description_placeholders={"period": PERIOD_LABELS["winter_normal"]},
+        )
+
+    async def async_step_pricing_winter_offpeak_day(self, user_input=None):
+        """Configure winter off-peak day pricing."""
+        if user_input is not None:
+            self._data.update(user_input)
+            return await self.async_step_pricing_winter_offpeak_night()
+
+        default_prices = DEFAULT_LEVERING_PRICES["winter_offpeak_day"]
+        schema = vol.Schema(
+            {
+                vol.Required("winter_offpeak_day_levering_0", default=default_prices[0]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("winter_offpeak_day_levering_1", default=default_prices[1]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("winter_offpeak_day_levering_2", default=default_prices[2]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("winter_offpeak_day_levering_3", default=default_prices[3]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+            }
+        )
+
+        return self.async_show_form(
+            step_id="pricing_winter_offpeak_day",
+            data_schema=schema,
+            description_placeholders={"period": PERIOD_LABELS["winter_offpeak_day"]},
+        )
+
+    async def async_step_pricing_winter_offpeak_night(self, user_input=None):
+        """Configure winter off-peak night pricing."""
+        if user_input is not None:
+            self._data.update(user_input)
+            return await self.async_step_export()
+
+        default_prices = DEFAULT_LEVERING_PRICES["winter_offpeak_night"]
+        schema = vol.Schema(
+            {
+                vol.Required("winter_offpeak_night_levering_0", default=default_prices[0]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("winter_offpeak_night_levering_1", default=default_prices[1]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("winter_offpeak_night_levering_2", default=default_prices[2]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+                vol.Required("winter_offpeak_night_levering_3", default=default_prices[3]): NumberSelector(
+                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                ),
+            }
+        )
+
+        return self.async_show_form(
+            step_id="pricing_winter_offpeak_night",
+            data_schema=schema,
+            description_placeholders={"period": PERIOD_LABELS["winter_offpeak_night"]},
         )
 
     async def async_step_export(self, user_input=None):

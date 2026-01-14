@@ -2,50 +2,40 @@
 
 """Pricing data for Vattenfall TijdPrijs with time-of-use and usage tiers."""
 
-# Pricing structure based on usage tiers (kWh/year: 0, 2900, 10000, 50000)
+# Fixed energy tax rates per tier (kWh/year: 0, 2900, 10000, 50000)
+# These are government-set and the same for all periods
 # All prices in €/kWh including VAT
+BELASTING_PER_TIER = [0.110848, 0.110848, 0.080719, 0.045194]
 
-SUMMER_NORMAL_PRICING = {
-    "levering": [0.115434, 0.115434, 0.115434, 0.115434],
-    "belasting": [0.110848, 0.110848, 0.080719, 0.045194],
+# Default delivery (levering) prices per time period and tier
+# These are Vattenfall-specific and can vary
+DEFAULT_LEVERING_PRICES = {
+    "summer_normal": [0.115434, 0.115434, 0.115434, 0.115434],
+    "summer_offpeak_weekday": [0.017908, 0.017908, 0.017908, 0.017908],
+    "summer_offpeak_weekend": [0.000000, 0.000000, 0.000000, 0.000000],
+    "winter_normal": [0.140723, 0.140723, 0.140723, 0.140723],
+    "winter_offpeak_day": [0.087483, 0.087483, 0.087483, 0.087483],
+    "winter_offpeak_night": [0.070785, 0.070785, 0.070785, 0.070785],
 }
 
-SUMMER_OFFPEAK_WEEKDAY_PRICING = {
-    "levering": [0.017908, 0.017908, 0.017908, 0.017908],
-    "belasting": [0.110848, 0.110848, 0.080719, 0.045194],
-}
+# Configuration keys for storing levering prices
+LEVERING_CONFIG_KEYS = [
+    "summer_normal_levering",
+    "summer_offpeak_weekday_levering",
+    "summer_offpeak_weekend_levering",
+    "winter_normal_levering",
+    "winter_offpeak_day_levering",
+    "winter_offpeak_night_levering",
+]
 
-SUMMER_OFFPEAK_WEEKEND_PRICING = {
-    "levering": [0.000000, 0.000000, 0.000000, 0.000000],
-    "belasting": [0.110848, 0.110848, 0.080719, 0.045194],
-}
-
-WINTER_NORMAL_PRICING = {
-    "levering": [0.140723, 0.140723, 0.140723, 0.140723],
-    "belasting": [0.110848, 0.110848, 0.080719, 0.045194],
-}
-
-WINTER_OFFPEAK_DAY_PRICING = {
-    "levering": [0.087483, 0.087483, 0.087483, 0.087483],
-    "belasting": [0.110848, 0.110848, 0.080719, 0.045194],
-}
-
-WINTER_OFFPEAK_NIGHT_PRICING = {
-    "levering": [0.070785, 0.070785, 0.070785, 0.070785],
-    "belasting": [0.110848, 0.110848, 0.080719, 0.045194],
-}
-
-# Fixed costs per day (€/day)
-FIXED_COSTS = {
-    "levering": 0.295572,
-    "belasting_reduction": -1.723173,  # Tax reduction (negative = credit)
-    "grid": 1.303654,
-}
-
-# Export pricing (yearly tariff)
-EXPORT_PRICING = {
-    "compensation": -0.134000,  # BTW-vrij tarief (negative = you receive money)
-    "costs": 0.055781,
+# Period labels for UI
+PERIOD_LABELS = {
+    "summer_normal": "Zomer normaal (00:00-12:00, 18:00-24:00)",
+    "summer_offpeak_weekday": "Zomer dal week (12:00-16:00)",
+    "summer_offpeak_weekend": "Zomer dal weekend (12:00-16:00)",
+    "winter_normal": "Winter normaal (06:00-12:00, 16:00-01:00)",
+    "winter_offpeak_day": "Winter dal dag (12:00-16:00)",
+    "winter_offpeak_night": "Winter dal nacht (01:00-06:00)",
 }
 
 
@@ -61,23 +51,31 @@ def get_tier_index(annual_consumption_kwh: float) -> int:
         return 0
 
 
-def get_import_price(season: str, period: str, tier_index: int) -> float:
-    """Get the import price for a given season, period, and tier."""
-    pricing_map = {
-        "summer": {
-            "normal": SUMMER_NORMAL_PRICING,
-            "off_peak_weekday": SUMMER_OFFPEAK_WEEKDAY_PRICING,
-            "off_peak_weekend": SUMMER_OFFPEAK_WEEKEND_PRICING,
-        },
-        "winter": {
-            "normal": WINTER_NORMAL_PRICING,
-            "off_peak_day": WINTER_OFFPEAK_DAY_PRICING,
-            "off_peak_night": WINTER_OFFPEAK_NIGHT_PRICING,
-        },
-    }
+def get_import_price(levering_prices: dict, season: str, period: str, tier_index: int) -> float:
+    """Get the import price for a given season, period, and tier.
     
-    pricing = pricing_map.get(season, {}).get(period, SUMMER_NORMAL_PRICING)
-    levering = pricing["levering"][tier_index]
-    belasting = pricing["belasting"][tier_index]
+    Args:
+        levering_prices: Dict with levering prices per period (from config)
+        season: 'summer' or 'winter'
+        period: Time period name
+        tier_index: Usage tier (0-3)
+    
+    Returns:
+        Total price (levering + belasting) in €/kWh
+    """
+    period_key = f"{season}_{period}"
+    config_key = f"{period_key}_levering"
+    
+    # Get levering price from config or use default
+    if config_key in levering_prices:
+        # Stored as comma-separated string of 4 tier prices
+        tier_prices = [float(x) for x in levering_prices[config_key].split(",")]
+        levering = tier_prices[tier_index]
+    else:
+        levering = DEFAULT_LEVERING_PRICES.get(period_key, [0]*4)[tier_index]
+    
+    # Belasting is fixed per tier
+    belasting = BELASTING_PER_TIER[tier_index]
     
     return levering + belasting
+

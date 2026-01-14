@@ -35,6 +35,73 @@
           "fixed_grid_costs": "Dagelijkse kosten voor systeembeheer (Enexis 3x25)"
         }
       },
+      "pricing_choice": {
+        "title": "Tarieven configuratie",
+        "description": "Wilt u aangepaste leveringstarieven configureren? De standaard Vattenfall TijdPrijs tarieven worden gebruikt als u dit overslaat.",
+        "data": {
+          "configure_pricing": "Configureer aangepaste leveringstarieven"
+        }
+      },
+      "pricing_summer_normal": {
+        "title": "Zomer normaal tarief",
+        "description": "Configureer leveringskosten voor {period}. Voer de kosten in voor elk verbruiksniveau (energiebelasting wordt automatisch toegevoegd).",
+        "data": {
+          "summer_normal_levering_0": "0-2900 kWh/jaar",
+          "summer_normal_levering_1": "2900-10000 kWh/jaar",
+          "summer_normal_levering_2": "10000-50000 kWh/jaar",
+          "summer_normal_levering_3": "50000+ kWh/jaar"
+        }
+      },
+      "pricing_summer_offpeak_weekday": {
+        "title": "Zomer dal week tarief",
+        "description": "Configureer leveringskosten voor {period}.",
+        "data": {
+          "summer_offpeak_weekday_levering_0": "0-2900 kWh/jaar",
+          "summer_offpeak_weekday_levering_1": "2900-10000 kWh/jaar",
+          "summer_offpeak_weekday_levering_2": "10000-50000 kWh/jaar",
+          "summer_offpeak_weekday_levering_3": "50000+ kWh/jaar"
+        }
+      },
+      "pricing_summer_offpeak_weekend": {
+        "title": "Zomer dal weekend tarief",
+        "description": "Configureer leveringskosten voor {period}.",
+        "data": {
+          "summer_offpeak_weekend_levering_0": "0-2900 kWh/jaar",
+          "summer_offpeak_weekend_levering_1": "2900-10000 kWh/jaar",
+          "summer_offpeak_weekend_levering_2": "10000-50000 kWh/jaar",
+          "summer_offpeak_weekend_levering_3": "50000+ kWh/jaar"
+        }
+      },
+      "pricing_winter_normal": {
+        "title": "Winter normaal tarief",
+        "description": "Configureer leveringskosten voor {period}.",
+        "data": {
+          "winter_normal_levering_0": "0-2900 kWh/jaar",
+          "winter_normal_levering_1": "2900-10000 kWh/jaar",
+          "winter_normal_levering_2": "10000-50000 kWh/jaar",
+          "winter_normal_levering_3": "50000+ kWh/jaar"
+        }
+      },
+      "pricing_winter_offpeak_day": {
+        "title": "Winter dal dag tarief",
+        "description": "Configureer leveringskosten voor {period}.",
+        "data": {
+          "winter_offpeak_day_levering_0": "0-2900 kWh/jaar",
+          "winter_offpeak_day_levering_1": "2900-10000 kWh/jaar",
+          "winter_offpeak_day_levering_2": "10000-50000 kWh/jaar",
+          "winter_offpeak_day_levering_3": "50000+ kWh/jaar"
+        }
+      },
+      "pricing_winter_offpeak_night": {
+        "title": "Winter dal nacht tarief",
+        "description": "Configureer leveringskosten voor {period}.",
+        "data": {
+          "winter_offpeak_night_levering_0": "0-2900 kWh/jaar",
+          "winter_offpeak_night_levering_1": "2900-10000 kWh/jaar",
+          "winter_offpeak_night_levering_2": "10000-50000 kWh/jaar",
+          "winter_offpeak_night_levering_3": "50000+ kWh/jaar"
+        }
+      },
       "export": {
         "title": "Teruglever tarieven",
         "description": "Configureer de teruglever vergoeding en kosten. Alle bedragen zijn inclusief BTW.",
