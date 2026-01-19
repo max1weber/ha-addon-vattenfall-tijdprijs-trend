@@ -25,29 +25,3 @@ DEFAULT_EXPORT_COSTS = 0.055781
 # Unit constants
 DEFAULT_UNIT_PRICE = "€/kWh"
 DEFAULT_UNIT_FIXED = "€/dag"
-
-# Time-of-use periods configuration
-# Format: (start_hour, end_hour) - hours in 24h format
-TOU_PERIODS = {
-    "summer": {
-        "normal": [
-            (0, 12),    # 00:00-12:00
-            (18, 24),   # 18:00-24:00
-        ],
-        "off_peak_weekday": [(12, 16)],     # 12:00-16:00
-        "off_peak_weekend": [(12, 16)],     # 12:00-16:00
-    },
-    "winter": {
-        "normal": [
-            (6, 12),    # 06:00-12:00
-            (16, 24),   # 16:00-01:00 (continues to next day)
-            (0, 1),     # 00:00-01:00
-        ],
-        "off_peak_day": [(12, 16)],         # 12:00-16:00
-        "off_peak_night": [(1, 6)],         # 01:00-06:00
-    },
-}
-
-# Season definitions (month ranges)
-SUMMER_MONTHS = range(4, 10)  # April to September (months 4-9)
-WINTER_MONTHS = list(range(1, 4)) + list(range(10, 13))  # Oct-Mar (months 1-3, 10-12)

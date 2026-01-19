@@ -48,8 +48,8 @@ WINTER_MONTHS = list(range(1, 4)) + list(range(10, 13))  # Oct-Mar
 TOU_PERIODS = {
     "summer": {
         "normal": [(0, 12), (18, 24)],
-        "offpeak_weekday": [(12, 18)],
-        "offpeak_weekend": [(12, 18)],
+        "offpeak_weekday": [(12, 16)],
+        "offpeak_weekend": [(12, 16)],
     },
     "winter": {
         "normal": [(6, 12), (16, 24), (0, 1)],
@@ -78,7 +78,7 @@ def get_period(dt: datetime, season: str) -> str:
                 # Handle weekend vs weekday for summer off-peak
                 if season == "summer" and "offpeak" in period_name:
                     return "offpeak_weekend" if is_weekend else "offpeak_weekday"
-                return period_name.replace("_", "")  # Remove underscore for consistency
+                return period_name
     
     # Default fallback (shouldn't happen if TOU_PERIODS is complete)
     return "normal"
