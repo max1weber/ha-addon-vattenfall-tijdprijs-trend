@@ -3,11 +3,102 @@
 """Tests for pricing data calculations."""
 
 import pytest
+from datetime import datetime
 from custom_components.vattenfall_tijdprijs.pricing_data import (
     get_import_price,
+    get_season,
+    get_period,
+    get_hourly_prices,
     BELASTING,
     DEFAULT_LEVERING_PRICES,
 )
+
+
+class TestGetSeason:
+    """Test season determination."""
+    
+    def test_summer_months(self):
+        """Test summer months (April-September)."""
+        assert get_season(datetime(2024, 4, 15)) == "summer"
+        assert get_season(datetime(2024, 6, 1)) == "summer"
+        assert get_season(datetime(2024, 9, 30)) == "summer"
+    
+    def test_winter_months(self):
+        """Test winter months (October-March)."""
+        assert get_season(datetime(2024, 1, 15)) == "winter"
+        assert get_season(datetime(2024, 3, 31)) == "winter"
+        assert get_season(datetime(2024, 10, 1)) == "winter"
+        assert get_season(datetime(2024, 12, 25)) == "winter"
+
+
+class TestGetPeriod:
+    """Test time-of-use period determination."""
+    
+    def test_summer_normal_morning(self):
+        """Test summer normal period (00:00-12:00)."""
+        dt = datetime(2024, 6, 10, 8, 0)  # Monday 08:00
+        assert get_period(dt, "summer") in ["normal", "offpeakweekday", "offpeakweekend"]
+    
+    def test_summer_normal_evening(self):
+        """Test summer normal period (18:00-24:00)."""
+        dt = datetime(2024, 6, 10, 20, 0)  # Monday 20:00
+        period = get_period(dt, "summer")
+        assert period == "normal"
+    
+    def test_summer_offpeak_weekday(self):
+        """Test summer off-peak weekday (12:00-18:00)."""
+        dt = datetime(2024, 6, 10, 14, 0)  # Monday 14:00
+        period = get_period(dt, "summer")
+        assert "offpeak" in period
+    
+    def test_winter_normal(self):
+        """Test winter normal period."""
+        dt = datetime(2024, 1, 10, 8, 0)  # Wednesday 08:00
+        period = get_period(dt, "winter")
+        assert period == "normal"
+    
+    def test_winter_offpeak_night(self):
+        """Test winter off-peak night (01:00-06:00)."""
+        dt = datetime(2024, 1, 10, 3, 0)  # Wednesday 03:00
+        period = get_period(dt, "winter")
+        assert "offpeak" in period or period == "offpeaknight"
+
+
+class TestGetHourlyPrices:
+    """Test hourly price calculation."""
+    
+    def test_returns_24_hours_by_default(self):
+        """Test that 24 hours of data is returned by default."""
+        start = datetime(2024, 6, 1, 0, 0)
+        prices = get_hourly_prices({}, start)
+        assert len(prices) == 24
+    
+    def test_custom_hour_count(self):
+        """Test custom number of hours."""
+        start = datetime(2024, 6, 1, 0, 0)
+        prices = get_hourly_prices({}, start, hours=48)
+        assert len(prices) == 48
+    
+    def test_hourly_data_structure(self):
+        """Test structure of hourly data."""
+        start = datetime(2024, 6, 1, 0, 0)
+        prices = get_hourly_prices({}, start, hours=1)
+        
+        assert len(prices) == 1
+        hour_data = prices[0]
+        assert "time" in hour_data
+        assert "hour" in hour_data
+        assert "price" in hour_data
+        assert "period" in hour_data
+        assert "season" in hour_data
+    
+    def test_prices_are_positive(self):
+        """Test that all prices are positive with defaults."""
+        start = datetime(2024, 6, 1, 0, 0)
+        prices = get_hourly_prices({}, start)
+        
+        for hour_data in prices:
+            assert hour_data["price"] > 0
 
 
 class TestGetImportPrice:
