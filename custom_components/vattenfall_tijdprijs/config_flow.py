@@ -5,6 +5,7 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.selector import (
+    BooleanSelector,
     NumberSelector,
     NumberSelectorConfig,
 )
@@ -97,7 +98,7 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema(
             {
-                vol.Required("configure_pricing", default=False): cv.boolean,
+                vol.Required("configure_pricing", default=False): BooleanSelector(),
             }
         )
 
