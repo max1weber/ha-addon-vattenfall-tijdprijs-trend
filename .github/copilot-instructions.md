@@ -129,12 +129,16 @@ tests/                    # Test suite
 
 The integration uses a multi-step configuration flow:
 
-1. **Annual Consumption**: Either enter a value or link to an existing sensor
+1. **Annual Consumption**: Enter annual consumption value in kWh (determines pricing tier)
 2. **Fixed Costs**: Daily delivery costs, tax reduction, grid costs
 3. **Delivery Tariffs** (optional): Configure levering prices per period/tier
 4. **Export Tariffs**: Compensation and costs for returned electricity
 
 All configuration values are stored in `entry.data` dictionary with keys defined in `const.py` (CONF_* constants).
+
+### Future Enhancements (Post v1.1.0)
+
+- **Consumption Sensor Integration**: Ability to link to an existing Home Assistant sensor for automatic annual consumption tracking instead of manual entry
 
 ## Common Tasks
 
