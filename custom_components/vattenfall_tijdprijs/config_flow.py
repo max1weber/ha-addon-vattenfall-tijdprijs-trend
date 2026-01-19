@@ -112,20 +112,11 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._data.update(user_input)
             return await self.async_step_pricing_summer_offpeak_weekday()
 
-        default_prices = DEFAULT_LEVERING_PRICES["summer_normal"]
+        default_price = DEFAULT_LEVERING_PRICES["summer_normal"]
         schema = vol.Schema(
             {
-                vol.Required("summer_normal_levering_0", default=default_prices[0]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("summer_normal_levering_1", default=default_prices[1]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("summer_normal_levering_2", default=default_prices[2]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("summer_normal_levering_3", default=default_prices[3]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                vol.Required("summer_normal_levering", default=default_price): NumberSelector(
+                    NumberSelectorConfig(min=-1, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
                 ),
             }
         )
@@ -142,20 +133,11 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._data.update(user_input)
             return await self.async_step_pricing_summer_offpeak_weekend()
 
-        default_prices = DEFAULT_LEVERING_PRICES["summer_offpeak_weekday"]
+        default_price = DEFAULT_LEVERING_PRICES["summer_offpeak_weekday"]
         schema = vol.Schema(
             {
-                vol.Required("summer_offpeak_weekday_levering_0", default=default_prices[0]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("summer_offpeak_weekday_levering_1", default=default_prices[1]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("summer_offpeak_weekday_levering_2", default=default_prices[2]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("summer_offpeak_weekday_levering_3", default=default_prices[3]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                vol.Required("summer_offpeak_weekday_levering", default=default_price): NumberSelector(
+                    NumberSelectorConfig(min=-1, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
                 ),
             }
         )
@@ -172,20 +154,11 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._data.update(user_input)
             return await self.async_step_pricing_winter_normal()
 
-        default_prices = DEFAULT_LEVERING_PRICES["summer_offpeak_weekend"]
+        default_price = DEFAULT_LEVERING_PRICES["summer_offpeak_weekend"]
         schema = vol.Schema(
             {
-                vol.Required("summer_offpeak_weekend_levering_0", default=default_prices[0]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("summer_offpeak_weekend_levering_1", default=default_prices[1]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("summer_offpeak_weekend_levering_2", default=default_prices[2]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("summer_offpeak_weekend_levering_3", default=default_prices[3]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                vol.Required("summer_offpeak_weekend_levering", default=default_price): NumberSelector(
+                    NumberSelectorConfig(min=-1, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
                 ),
             }
         )
@@ -202,20 +175,11 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._data.update(user_input)
             return await self.async_step_pricing_winter_offpeak_day()
 
-        default_prices = DEFAULT_LEVERING_PRICES["winter_normal"]
+        default_price = DEFAULT_LEVERING_PRICES["winter_normal"]
         schema = vol.Schema(
             {
-                vol.Required("winter_normal_levering_0", default=default_prices[0]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("winter_normal_levering_1", default=default_prices[1]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("winter_normal_levering_2", default=default_prices[2]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("winter_normal_levering_3", default=default_prices[3]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                vol.Required("winter_normal_levering", default=default_price): NumberSelector(
+                    NumberSelectorConfig(min=-1, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
                 ),
             }
         )
@@ -232,20 +196,11 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._data.update(user_input)
             return await self.async_step_pricing_winter_offpeak_night()
 
-        default_prices = DEFAULT_LEVERING_PRICES["winter_offpeak_day"]
+        default_price = DEFAULT_LEVERING_PRICES["winter_offpeak_day"]
         schema = vol.Schema(
             {
-                vol.Required("winter_offpeak_day_levering_0", default=default_prices[0]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("winter_offpeak_day_levering_1", default=default_prices[1]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("winter_offpeak_day_levering_2", default=default_prices[2]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("winter_offpeak_day_levering_3", default=default_prices[3]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                vol.Required("winter_offpeak_day_levering", default=default_price): NumberSelector(
+                    NumberSelectorConfig(min=-1, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
                 ),
             }
         )
@@ -262,20 +217,11 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._data.update(user_input)
             return await self.async_step_export()
 
-        default_prices = DEFAULT_LEVERING_PRICES["winter_offpeak_night"]
+        default_price = DEFAULT_LEVERING_PRICES["winter_offpeak_night"]
         schema = vol.Schema(
             {
-                vol.Required("winter_offpeak_night_levering_0", default=default_prices[0]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("winter_offpeak_night_levering_1", default=default_prices[1]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("winter_offpeak_night_levering_2", default=default_prices[2]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
-                ),
-                vol.Required("winter_offpeak_night_levering_3", default=default_prices[3]): NumberSelector(
-                    NumberSelectorConfig(min=0, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
+                vol.Required("winter_offpeak_night_levering", default=default_price): NumberSelector(
+                    NumberSelectorConfig(min=-1, max=1, step=0.000001, unit_of_measurement="€/kWh", mode="box")
                 ),
             }
         )
@@ -328,4 +274,3 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="export",
             data_schema=schema,
         )
-

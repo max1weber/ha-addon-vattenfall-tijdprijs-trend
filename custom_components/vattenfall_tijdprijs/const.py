@@ -6,11 +6,6 @@ DOMAIN = "vattenfall_tijdprijs"
 NAME = "Vattenfall Tijdprijs"
 VERSION = "1.1.0"
 
-# Configuration keys
-CONF_ANNUAL_CONSUMPTION = "annual_consumption"
-CONF_USE_CONSUMPTION_SENSOR = "use_consumption_sensor"
-CONF_CONSUMPTION_SENSOR = "consumption_sensor"
-
 # Fixed costs configuration
 CONF_FIXED_DELIVERY = "fixed_delivery_costs"
 CONF_FIXED_TAX_REDUCTION = "fixed_tax_reduction"
@@ -27,15 +22,9 @@ DEFAULT_FIXED_GRID = 1.303654
 DEFAULT_EXPORT_COMPENSATION = -0.134000
 DEFAULT_EXPORT_COSTS = 0.055781
 
-# Default annual consumption for tier calculation
-DEFAULT_ANNUAL_CONSUMPTION = 3000
-
 # Unit constants
 DEFAULT_UNIT_PRICE = "€/kWh"
 DEFAULT_UNIT_FIXED = "€/dag"
-
-# Usage tiers (kWh per year)
-USAGE_TIERS = [0, 2900, 10000, 50000]
 
 # Time-of-use periods configuration
 # Format: (start_hour, end_hour) - hours in 24h format
