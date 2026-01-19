@@ -6,15 +6,11 @@ import pytest
 from custom_components.vattenfall_tijdprijs.config_flow import VattenfallConfigFlow
 from custom_components.vattenfall_tijdprijs.const import (
     DOMAIN,
-    CONF_ANNUAL_CONSUMPTION,
-    CONF_USE_CONSUMPTION_SENSOR,
-    CONF_CONSUMPTION_SENSOR,
     CONF_FIXED_DELIVERY,
     CONF_FIXED_TAX_REDUCTION,
     CONF_FIXED_GRID,
     CONF_EXPORT_COMPENSATION,
     CONF_EXPORT_COSTS,
-    DEFAULT_ANNUAL_CONSUMPTION,
     DEFAULT_FIXED_DELIVERY,
     DEFAULT_FIXED_TAX_REDUCTION,
     DEFAULT_FIXED_GRID,
@@ -39,23 +35,6 @@ class TestConfigFlowInitialization:
 
 class TestConfigFlowDataManagement:
     """Test config flow data handling."""
-
-    def test_data_accumulation_user_step(self):
-        """Test that user step data is accumulated."""
-        flow = VattenfallConfigFlow()
-        
-        # Simulate user step input
-        user_data = {
-            CONF_USE_CONSUMPTION_SENSOR: False,
-            CONF_ANNUAL_CONSUMPTION: 3500,
-        }
-        
-        # This updates flow._data
-        for key, value in user_data.items():
-            flow._data[key] = value
-        
-        assert flow._data[CONF_USE_CONSUMPTION_SENSOR] is False
-        assert flow._data[CONF_ANNUAL_CONSUMPTION] == 3500
 
     def test_data_accumulation_fixed_costs(self):
         """Test that fixed costs are accumulated."""
@@ -94,8 +73,6 @@ class TestConfigFlowDataManagement:
         flow = VattenfallConfigFlow()
         
         # Simulate the complete flow
-        flow._data[CONF_USE_CONSUMPTION_SENSOR] = False
-        flow._data[CONF_ANNUAL_CONSUMPTION] = 3000
         flow._data[CONF_FIXED_DELIVERY] = 0.30
         flow._data[CONF_FIXED_TAX_REDUCTION] = -1.50
         flow._data[CONF_FIXED_GRID] = 1.20
@@ -103,9 +80,7 @@ class TestConfigFlowDataManagement:
         flow._data[CONF_EXPORT_COSTS] = 0.05
         
         # Verify all data is present
-        assert len(flow._data) == 7
-        assert CONF_USE_CONSUMPTION_SENSOR in flow._data
-        assert CONF_ANNUAL_CONSUMPTION in flow._data
+        assert len(flow._data) == 5
         assert CONF_FIXED_DELIVERY in flow._data
         assert CONF_FIXED_TAX_REDUCTION in flow._data
         assert CONF_FIXED_GRID in flow._data
@@ -115,11 +90,6 @@ class TestConfigFlowDataManagement:
 
 class TestConfigFlowDefaultValues:
     """Test default values are reasonable."""
-
-    def test_default_annual_consumption_is_positive(self):
-        """Test that default annual consumption is positive."""
-        assert DEFAULT_ANNUAL_CONSUMPTION > 0
-        assert DEFAULT_ANNUAL_CONSUMPTION == 3000
 
     def test_default_fixed_costs_have_correct_signs(self):
         """Test that default fixed costs have correct signs."""

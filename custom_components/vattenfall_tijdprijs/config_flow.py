@@ -5,22 +5,16 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.selector import (
-    EntitySelector,
-    EntitySelectorConfig,
     NumberSelector,
     NumberSelectorConfig,
 )
 
 from .const import (
-    CONF_ANNUAL_CONSUMPTION,
-    CONF_CONSUMPTION_SENSOR,
     CONF_EXPORT_COMPENSATION,
     CONF_EXPORT_COSTS,
     CONF_FIXED_DELIVERY,
     CONF_FIXED_GRID,
     CONF_FIXED_TAX_REDUCTION,
-    CONF_USE_CONSUMPTION_SENSOR,
-    DEFAULT_ANNUAL_CONSUMPTION,
     DEFAULT_EXPORT_COMPENSATION,
     DEFAULT_EXPORT_COSTS,
     DEFAULT_FIXED_DELIVERY,
@@ -41,70 +35,7 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._data = {}
 
     async def async_step_user(self, user_input=None):
-        """Handle the initial step - consumption configuration."""
-        errors = {}
-
-        if user_input is not None:
-            self._data.update(user_input)
-            return await self.async_step_consumption_sensor()
-
-        schema = vol.Schema(
-            {
-                vol.Required(
-                    CONF_USE_CONSUMPTION_SENSOR,
-                    default=False,
-                ): cv.boolean,
-                vol.Optional(
-                    CONF_ANNUAL_CONSUMPTION,
-                    default=DEFAULT_ANNUAL_CONSUMPTION,
-                ): NumberSelector(
-                    NumberSelectorConfig(
-                        min=0,
-                        max=100000,
-                        step=100,
-                        unit_of_measurement="kWh",
-                        mode="box",
-                    )
-                ),
-            }
-        )
-
-        return self.async_show_form(
-            step_id="user",
-            data_schema=schema,
-            errors=errors,
-            description_placeholders={
-                "title": "Jaarverbruik configuratie",
-            },
-        )
-
-    async def async_step_consumption_sensor(self, user_input=None):
-        """Handle consumption sensor configuration."""
-        errors = {}
-
-        if user_input is not None:
-            self._data.update(user_input)
-            return await self.async_step_fixed_costs()
-
-        if not self._data.get(CONF_USE_CONSUMPTION_SENSOR):
-            return await self.async_step_fixed_costs()
-
-        schema = vol.Schema(
-            {
-                vol.Required(CONF_CONSUMPTION_SENSOR): EntitySelector(
-                    EntitySelectorConfig(domain="sensor")
-                ),
-            }
-        )
-
-        return self.async_show_form(
-            step_id="consumption_sensor",
-            data_schema=schema,
-            errors=errors,
-        )
-
-    async def async_step_fixed_costs(self, user_input=None):
-        """Handle fixed costs configuration."""
+        """Handle the initial step - fixed costs configuration."""
         if user_input is not None:
             self._data.update(user_input)
             # Ask if user wants to configure custom pricing
@@ -152,7 +83,7 @@ class VattenfallConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
         return self.async_show_form(
-            step_id="fixed_costs",
+            step_id="user",
             data_schema=schema,
         )
 
