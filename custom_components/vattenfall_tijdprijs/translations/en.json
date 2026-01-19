@@ -1,9 +1,81 @@
 {
+  "title": "Vattenfall Tijdprijs",
   "config": {
     "step": {
       "user": {
-        "title": "Configure tariffs",
-        "description": "All prices are VAT included."
+        "title": "Configure Fixed Costs",
+        "description": "Configure daily fixed costs (in €/day). All amounts are VAT included.",
+        "data": {
+          "fixed_delivery_costs": "Fixed Delivery Costs",
+          "fixed_tax_reduction": "Energy Tax Reduction",
+          "fixed_grid_costs": "Grid Management Costs"
+        },
+        "data_description": {
+          "fixed_delivery_costs": "Daily fixed delivery costs",
+          "fixed_tax_reduction": "Daily energy tax reduction (negative amount = reduction)",
+          "fixed_grid_costs": "Daily grid management costs (Enexis 3x25)"
+        }
+      },
+      "pricing_choice": {
+        "title": "Pricing Configuration",
+        "description": "Would you like to configure custom delivery tariffs? Default Vattenfall TijdPrijs tariffs will be used if you skip this.",
+        "data": {
+          "configure_pricing": "Configure custom delivery tariffs"
+        }
+      },
+      "pricing_summer_normal": {
+        "title": "Summer Normal Rate",
+        "description": "Configure delivery costs for {period}.",
+        "data": {
+          "summer_normal_levering": "Delivery Rate"
+        }
+      },
+      "pricing_summer_offpeak_weekday": {
+        "title": "Summer Off-Peak Weekday Rate",
+        "description": "Configure delivery costs for {period}.",
+        "data": {
+          "summer_offpeak_weekday_levering": "Delivery Rate"
+        }
+      },
+      "pricing_summer_offpeak_weekend": {
+        "title": "Summer Off-Peak Weekend Rate",
+        "description": "Configure delivery costs for {period}.",
+        "data": {
+          "summer_offpeak_weekend_levering": "Delivery Rate"
+        }
+      },
+      "pricing_winter_normal": {
+        "title": "Winter Normal Rate",
+        "description": "Configure delivery costs for {period}.",
+        "data": {
+          "winter_normal_levering": "Delivery Rate"
+        }
+      },
+      "pricing_winter_offpeak_day": {
+        "title": "Winter Off-Peak Day Rate",
+        "description": "Configure delivery costs for {period}.",
+        "data": {
+          "winter_offpeak_day_levering": "Delivery Rate"
+        }
+      },
+      "pricing_winter_offpeak_night": {
+        "title": "Winter Off-Peak Night Rate",
+        "description": "Configure delivery costs for {period}.",
+        "data": {
+          "winter_offpeak_night_levering": "Delivery Rate"
+        }
+      },
+      "export": {
+        "title": "Export Tariffs",
+        "description": "Configure export compensation and costs. All amounts are VAT included.",
+        "data": {
+          "export_compensation": "Export Compensation",
+          "export_costs": "Export Costs"
+        },
+        "data_description": {
+          "export_compensation": "Annual compensation for exported electricity (VAT-free rate)",
+          "export_costs": "Costs for exporting electricity"
+        }
       }
     }
   }

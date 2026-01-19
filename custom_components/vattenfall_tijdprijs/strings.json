@@ -3,25 +3,6 @@
   "config": {
     "step": {
       "user": {
-        "title": "Jaarverbruik configureren",
-        "description": "Configureer uw jaarlijks elektriciteitsverbruik voor correcte tariefberekening.",
-        "data": {
-          "use_consumption_sensor": "Gebruik verbruikssensor",
-          "annual_consumption": "Geschat jaarverbruik"
-        },
-        "data_description": {
-          "use_consumption_sensor": "Gebruik een bestaande sensor voor jaarverbruik tracking",
-          "annual_consumption": "Verwacht jaarlijks verbruik in kWh (bepaalt uw tariefschijf)"
-        }
-      },
-      "consumption_sensor": {
-        "title": "Verbruikssensor selecteren",
-        "description": "Selecteer de sensor die uw jaarlijks verbruik bijhoudt.",
-        "data": {
-          "consumption_sensor": "Verbruikssensor"
-        }
-      },
-      "fixed_costs": {
         "title": "Vaste kosten configureren",
         "description": "Configureer de vaste dagelijkse kosten (in €/dag). Alle bedragen zijn inclusief BTW.",
         "data": {
@@ -44,62 +25,44 @@
       },
       "pricing_summer_normal": {
         "title": "Zomer normaal tarief",
-        "description": "Configureer leveringskosten voor {period}. Voer de kosten in voor elk verbruiksniveau (energiebelasting wordt automatisch toegevoegd).",
+        "description": "Configureer leveringskosten voor {period}.",
         "data": {
-          "summer_normal_levering_0": "0-2900 kWh/jaar",
-          "summer_normal_levering_1": "2900-10000 kWh/jaar",
-          "summer_normal_levering_2": "10000-50000 kWh/jaar",
-          "summer_normal_levering_3": "50000+ kWh/jaar"
+          "summer_normal_levering": "Leveringstarief"
         }
       },
       "pricing_summer_offpeak_weekday": {
         "title": "Zomer dal week tarief",
         "description": "Configureer leveringskosten voor {period}.",
         "data": {
-          "summer_offpeak_weekday_levering_0": "0-2900 kWh/jaar",
-          "summer_offpeak_weekday_levering_1": "2900-10000 kWh/jaar",
-          "summer_offpeak_weekday_levering_2": "10000-50000 kWh/jaar",
-          "summer_offpeak_weekday_levering_3": "50000+ kWh/jaar"
+          "summer_offpeak_weekday_levering": "Leveringstarief"
         }
       },
       "pricing_summer_offpeak_weekend": {
         "title": "Zomer dal weekend tarief",
         "description": "Configureer leveringskosten voor {period}.",
         "data": {
-          "summer_offpeak_weekend_levering_0": "0-2900 kWh/jaar",
-          "summer_offpeak_weekend_levering_1": "2900-10000 kWh/jaar",
-          "summer_offpeak_weekend_levering_2": "10000-50000 kWh/jaar",
-          "summer_offpeak_weekend_levering_3": "50000+ kWh/jaar"
+          "summer_offpeak_weekend_levering": "Leveringstarief"
         }
       },
       "pricing_winter_normal": {
         "title": "Winter normaal tarief",
         "description": "Configureer leveringskosten voor {period}.",
         "data": {
-          "winter_normal_levering_0": "0-2900 kWh/jaar",
-          "winter_normal_levering_1": "2900-10000 kWh/jaar",
-          "winter_normal_levering_2": "10000-50000 kWh/jaar",
-          "winter_normal_levering_3": "50000+ kWh/jaar"
+          "winter_normal_levering": "Leveringstarief"
         }
       },
       "pricing_winter_offpeak_day": {
         "title": "Winter dal dag tarief",
         "description": "Configureer leveringskosten voor {period}.",
         "data": {
-          "winter_offpeak_day_levering_0": "0-2900 kWh/jaar",
-          "winter_offpeak_day_levering_1": "2900-10000 kWh/jaar",
-          "winter_offpeak_day_levering_2": "10000-50000 kWh/jaar",
-          "winter_offpeak_day_levering_3": "50000+ kWh/jaar"
+          "winter_offpeak_day_levering": "Leveringstarief"
         }
       },
       "pricing_winter_offpeak_night": {
         "title": "Winter dal nacht tarief",
         "description": "Configureer leveringskosten voor {period}.",
         "data": {
-          "winter_offpeak_night_levering_0": "0-2900 kWh/jaar",
-          "winter_offpeak_night_levering_1": "2900-10000 kWh/jaar",
-          "winter_offpeak_night_levering_2": "10000-50000 kWh/jaar",
-          "winter_offpeak_night_levering_3": "50000+ kWh/jaar"
+          "winter_offpeak_night_levering": "Leveringstarief"
         }
       },
       "export": {
