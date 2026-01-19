@@ -29,63 +29,7 @@ class TestConfigFlowInitialization:
     def test_config_flow_initialization(self):
         """Test that config flow initializes correctly."""
         flow = VattenfallConfigFlow()
-        assert flow._data == {}
         assert flow.VERSION == 1
-
-
-class TestConfigFlowDataManagement:
-    """Test config flow data handling."""
-
-    def test_data_accumulation_fixed_costs(self):
-        """Test that fixed costs are accumulated."""
-        flow = VattenfallConfigFlow()
-        
-        fixed_costs = {
-            CONF_FIXED_DELIVERY: 0.30,
-            CONF_FIXED_TAX_REDUCTION: -1.50,
-            CONF_FIXED_GRID: 1.20,
-        }
-        
-        for key, value in fixed_costs.items():
-            flow._data[key] = value
-        
-        assert flow._data[CONF_FIXED_DELIVERY] == 0.30
-        assert flow._data[CONF_FIXED_TAX_REDUCTION] == -1.50
-        assert flow._data[CONF_FIXED_GRID] == 1.20
-
-    def test_data_accumulation_export_rates(self):
-        """Test that export rates are accumulated."""
-        flow = VattenfallConfigFlow()
-        
-        export_data = {
-            CONF_EXPORT_COMPENSATION: -0.10,
-            CONF_EXPORT_COSTS: 0.05,
-        }
-        
-        for key, value in export_data.items():
-            flow._data[key] = value
-        
-        assert flow._data[CONF_EXPORT_COMPENSATION] == -0.10
-        assert flow._data[CONF_EXPORT_COSTS] == 0.05
-
-    def test_full_flow_data_assembly(self):
-        """Test that full flow assembles complete config data."""
-        flow = VattenfallConfigFlow()
-        
-        # Simulate the complete flow
-        flow._data[CONF_FIXED_DELIVERY] = 0.30
-        flow._data[CONF_FIXED_TAX_REDUCTION] = -1.50
-        flow._data[CONF_FIXED_GRID] = 1.20
-        flow._data[CONF_EXPORT_COMPENSATION] = -0.10
-        flow._data[CONF_EXPORT_COSTS] = 0.05
-        
-        # Verify all data is present
-        assert len(flow._data) == 5
-        assert CONF_FIXED_DELIVERY in flow._data
-        assert CONF_FIXED_TAX_REDUCTION in flow._data
-        assert CONF_FIXED_GRID in flow._data
-        assert CONF_EXPORT_COMPENSATION in flow._data
-        assert CONF_EXPORT_COSTS in flow._data
 
 
 class TestConfigFlowDefaultValues:

@@ -3,79 +3,8 @@
   "config": {
     "step": {
       "user": {
-        "title": "Vaste kosten configureren",
-        "description": "Configureer de vaste dagelijkse kosten (in €/dag). Alle bedragen zijn inclusief BTW.",
-        "data": {
-          "fixed_delivery_costs": "Vaste leveringskosten",
-          "fixed_tax_reduction": "Vermindering energiebelasting",
-          "fixed_grid_costs": "Systeembeheerkosten"
-        },
-        "data_description": {
-          "fixed_delivery_costs": "Dagelijkse vaste kosten voor levering",
-          "fixed_tax_reduction": "Dagelijkse korting op energiebelasting (negatief bedrag = korting)",
-          "fixed_grid_costs": "Dagelijkse kosten voor systeembeheer (Enexis 3x25)"
-        }
-      },
-      "pricing_choice": {
-        "title": "Tarieven configuratie",
-        "description": "Wilt u aangepaste leveringstarieven configureren? De standaard Vattenfall TijdPrijs tarieven worden gebruikt als u dit overslaat.",
-        "data": {
-          "configure_pricing": "Configureer aangepaste leveringstarieven"
-        }
-      },
-      "pricing_summer_normal": {
-        "title": "Zomer normaal tarief",
-        "description": "Configureer leveringskosten voor {period}.",
-        "data": {
-          "summer_normal_levering": "Leveringstarief"
-        }
-      },
-      "pricing_summer_offpeak_weekday": {
-        "title": "Zomer dal week tarief",
-        "description": "Configureer leveringskosten voor {period}.",
-        "data": {
-          "summer_offpeak_weekday_levering": "Leveringstarief"
-        }
-      },
-      "pricing_summer_offpeak_weekend": {
-        "title": "Zomer dal weekend tarief",
-        "description": "Configureer leveringskosten voor {period}.",
-        "data": {
-          "summer_offpeak_weekend_levering": "Leveringstarief"
-        }
-      },
-      "pricing_winter_normal": {
-        "title": "Winter normaal tarief",
-        "description": "Configureer leveringskosten voor {period}.",
-        "data": {
-          "winter_normal_levering": "Leveringstarief"
-        }
-      },
-      "pricing_winter_offpeak_day": {
-        "title": "Winter dal dag tarief",
-        "description": "Configureer leveringskosten voor {period}.",
-        "data": {
-          "winter_offpeak_day_levering": "Leveringstarief"
-        }
-      },
-      "pricing_winter_offpeak_night": {
-        "title": "Winter dal nacht tarief",
-        "description": "Configureer leveringskosten voor {period}.",
-        "data": {
-          "winter_offpeak_night_levering": "Leveringstarief"
-        }
-      },
-      "export": {
-        "title": "Teruglever tarieven",
-        "description": "Configureer de teruglever vergoeding en kosten. Alle bedragen zijn inclusief BTW.",
-        "data": {
-          "export_compensation": "Terugleververgoeding",
-          "export_costs": "Terugleverkosten"
-        },
-        "data_description": {
-          "export_compensation": "Jaarlijkse vergoeding voor teruggeleverde stroom (BTW-vrij tarief)",
-          "export_costs": "Kosten voor het terugleveren van stroom"
-        }
+        "title": "Vattenfall Tijdprijs toevoegen",
+        "description": "De integratie wordt toegevoegd met standaard tarieven. U kunt deze later aanpassen via de integratie-instellingen."
       }
     }
   }
