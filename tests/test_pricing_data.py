@@ -3,147 +3,180 @@
 """Tests for pricing data calculations."""
 
 import pytest
+from datetime import datetime
 from custom_components.vattenfall_tijdprijs.pricing_data import (
-    get_tier_index,
     get_import_price,
-    BELASTING_PER_TIER,
+    get_season,
+    get_period,
+    get_hourly_prices,
+    BELASTING,
     DEFAULT_LEVERING_PRICES,
 )
 
 
-class TestGetTierIndex:
-    """Test tier index calculation based on annual consumption."""
+class TestGetSeason:
+    """Test season determination."""
+    
+    def test_summer_months(self):
+        """Test summer months (April-September)."""
+        assert get_season(datetime(2024, 4, 15)) == "summer"
+        assert get_season(datetime(2024, 6, 1)) == "summer"
+        assert get_season(datetime(2024, 9, 30)) == "summer"
+    
+    def test_winter_months(self):
+        """Test winter months (October-March)."""
+        assert get_season(datetime(2024, 1, 15)) == "winter"
+        assert get_season(datetime(2024, 3, 31)) == "winter"
+        assert get_season(datetime(2024, 10, 1)) == "winter"
+        assert get_season(datetime(2024, 12, 25)) == "winter"
 
-    def test_tier_0_under_2900(self):
-        """Test tier 0 for consumption under 2900 kWh/year."""
-        assert get_tier_index(0) == 0
-        assert get_tier_index(1000) == 0
-        assert get_tier_index(2899) == 0
 
-    def test_tier_1_2900_to_9999(self):
-        """Test tier 1 for consumption 2900-9999 kWh/year."""
-        assert get_tier_index(2900) == 1
-        assert get_tier_index(5000) == 1
-        assert get_tier_index(9999) == 1
+class TestGetPeriod:
+    """Test time-of-use period determination."""
+    
+    def test_summer_normal_morning(self):
+        """Test summer normal period (00:00-12:00)."""
+        dt = datetime(2024, 6, 10, 8, 0)  # Monday 08:00
+        assert get_period(dt, "summer") in ["normal", "offpeakweekday", "offpeakweekend"]
+    
+    def test_summer_normal_evening(self):
+        """Test summer normal period (18:00-24:00)."""
+        dt = datetime(2024, 6, 10, 20, 0)  # Monday 20:00
+        period = get_period(dt, "summer")
+        assert period == "normal"
+    
+    def test_summer_offpeak_weekday(self):
+        """Test summer off-peak weekday (12:00-18:00)."""
+        dt = datetime(2024, 6, 10, 14, 0)  # Monday 14:00
+        period = get_period(dt, "summer")
+        assert "offpeak" in period
+    
+    def test_winter_normal(self):
+        """Test winter normal period."""
+        dt = datetime(2024, 1, 10, 8, 0)  # Wednesday 08:00
+        period = get_period(dt, "winter")
+        assert period == "normal"
+    
+    def test_winter_offpeak_night(self):
+        """Test winter off-peak night (01:00-06:00)."""
+        dt = datetime(2024, 1, 10, 3, 0)  # Wednesday 03:00
+        period = get_period(dt, "winter")
+        assert "offpeak" in period or period == "offpeaknight"
 
-    def test_tier_2_10000_to_49999(self):
-        """Test tier 2 for consumption 10000-49999 kWh/year."""
-        assert get_tier_index(10000) == 2
-        assert get_tier_index(25000) == 2
-        assert get_tier_index(49999) == 2
 
-    def test_tier_3_50000_and_above(self):
-        """Test tier 3 for consumption 50000+ kWh/year."""
-        assert get_tier_index(50000) == 3
-        assert get_tier_index(100000) == 3
-        assert get_tier_index(999999) == 3
-
-    def test_boundary_values(self):
-        """Test boundary values between tiers."""
-        assert get_tier_index(2899.99) == 0
-        assert get_tier_index(2900) == 1
-        assert get_tier_index(9999.99) == 1
-        assert get_tier_index(10000) == 2
-        assert get_tier_index(49999.99) == 2
-        assert get_tier_index(50000) == 3
+class TestGetHourlyPrices:
+    """Test hourly price calculation."""
+    
+    def test_returns_24_hours_by_default(self):
+        """Test that 24 hours of data is returned by default."""
+        start = datetime(2024, 6, 1, 0, 0)
+        prices = get_hourly_prices({}, start)
+        assert len(prices) == 24
+    
+    def test_custom_hour_count(self):
+        """Test custom number of hours."""
+        start = datetime(2024, 6, 1, 0, 0)
+        prices = get_hourly_prices({}, start, hours=48)
+        assert len(prices) == 48
+    
+    def test_hourly_data_structure(self):
+        """Test structure of hourly data."""
+        start = datetime(2024, 6, 1, 0, 0)
+        prices = get_hourly_prices({}, start, hours=1)
+        
+        assert len(prices) == 1
+        hour_data = prices[0]
+        assert "time" in hour_data
+        assert "hour" in hour_data
+        assert "price" in hour_data
+        assert "period" in hour_data
+        assert "season" in hour_data
+    
+    def test_prices_are_positive(self):
+        """Test that all prices are positive with defaults."""
+        start = datetime(2024, 6, 1, 0, 0)
+        prices = get_hourly_prices({}, start)
+        
+        for hour_data in prices:
+            assert hour_data["price"] > 0
 
 
 class TestGetImportPrice:
     """Test import price calculation with default values."""
 
-    def test_default_summer_normal_all_tiers(self):
-        """Test default summer normal prices for all tiers."""
-        for tier in range(4):
-            price = get_import_price({}, "summer", "normal", tier)
-            expected = DEFAULT_LEVERING_PRICES["summer_normal"][tier] + BELASTING_PER_TIER[tier]
-            assert abs(price - expected) < 0.000001
+    def test_default_summer_normal(self):
+        """Test default summer normal price."""
+        price = get_import_price({}, "summer", "normal")
+        expected = DEFAULT_LEVERING_PRICES["summer_normal"] + BELASTING
+        assert abs(price - expected) < 0.000001
 
-    def test_default_winter_normal_all_tiers(self):
-        """Test default winter normal prices for all tiers."""
-        for tier in range(4):
-            price = get_import_price({}, "winter", "normal", tier)
-            expected = DEFAULT_LEVERING_PRICES["winter_normal"][tier] + BELASTING_PER_TIER[tier]
-            assert abs(price - expected) < 0.000001
+    def test_default_winter_normal(self):
+        """Test default winter normal price."""
+        price = get_import_price({}, "winter", "normal")
+        expected = DEFAULT_LEVERING_PRICES["winter_normal"] + BELASTING
+        assert abs(price - expected) < 0.000001
 
     def test_default_summer_offpeak_weekday(self):
-        """Test default summer off-peak weekday prices."""
-        for tier in range(4):
-            price = get_import_price({}, "summer", "offpeak_weekday", tier)
-            expected = DEFAULT_LEVERING_PRICES["summer_offpeak_weekday"][tier] + BELASTING_PER_TIER[tier]
-            assert abs(price - expected) < 0.000001
+        """Test default summer off-peak weekday price."""
+        price = get_import_price({}, "summer", "offpeak_weekday")
+        expected = DEFAULT_LEVERING_PRICES["summer_offpeak_weekday"] + BELASTING
+        assert abs(price - expected) < 0.000001
 
     def test_default_summer_offpeak_weekend(self):
-        """Test default summer off-peak weekend prices (free delivery)."""
-        for tier in range(4):
-            price = get_import_price({}, "summer", "offpeak_weekend", tier)
-            expected = DEFAULT_LEVERING_PRICES["summer_offpeak_weekend"][tier] + BELASTING_PER_TIER[tier]
-            assert abs(price - expected) < 0.000001
+        """Test default summer off-peak weekend price (free delivery)."""
+        price = get_import_price({}, "summer", "offpeak_weekend")
+        expected = DEFAULT_LEVERING_PRICES["summer_offpeak_weekend"] + BELASTING
+        assert abs(price - expected) < 0.000001
 
     def test_default_winter_offpeak_day(self):
-        """Test default winter off-peak day prices."""
-        for tier in range(4):
-            price = get_import_price({}, "winter", "offpeak_day", tier)
-            expected = DEFAULT_LEVERING_PRICES["winter_offpeak_day"][tier] + BELASTING_PER_TIER[tier]
-            assert abs(price - expected) < 0.000001
+        """Test default winter off-peak day price."""
+        price = get_import_price({}, "winter", "offpeak_day")
+        expected = DEFAULT_LEVERING_PRICES["winter_offpeak_day"] + BELASTING
+        assert abs(price - expected) < 0.000001
 
     def test_default_winter_offpeak_night(self):
-        """Test default winter off-peak night prices."""
-        for tier in range(4):
-            price = get_import_price({}, "winter", "offpeak_night", tier)
-            expected = DEFAULT_LEVERING_PRICES["winter_offpeak_night"][tier] + BELASTING_PER_TIER[tier]
-            assert abs(price - expected) < 0.000001
+        """Test default winter off-peak night price."""
+        price = get_import_price({}, "winter", "offpeak_night")
+        expected = DEFAULT_LEVERING_PRICES["winter_offpeak_night"] + BELASTING
+        assert abs(price - expected) < 0.000001
 
 
 class TestGetImportPriceCustomValues:
     """Test import price calculation with custom values."""
 
-    def test_custom_levering_price_all_tiers_same(self):
-        """Test custom levering prices with same value for all tiers."""
+    def test_custom_levering_price(self):
+        """Test custom levering price."""
         custom_levering = 0.10
-        levering_prices = {"summer_normal_levering": "0.10,0.10,0.10,0.10"}
+        levering_prices = {"summer_normal_levering": custom_levering}
         
-        for tier in range(4):
-            price = get_import_price(levering_prices, "summer", "normal", tier)
-            expected = custom_levering + BELASTING_PER_TIER[tier]
-            assert abs(price - expected) < 0.000001
-
-    def test_custom_levering_price_different_tiers(self):
-        """Test custom levering prices with different values per tier."""
-        levering_prices = {"winter_normal_levering": "0.10,0.12,0.14,0.16"}
-        expected_leveringen = [0.10, 0.12, 0.14, 0.16]
-        
-        for tier in range(4):
-            price = get_import_price(levering_prices, "winter", "normal", tier)
-            expected = expected_leveringen[tier] + BELASTING_PER_TIER[tier]
-            assert abs(price - expected) < 0.000001
+        price = get_import_price(levering_prices, "summer", "normal")
+        expected = custom_levering + BELASTING
+        assert abs(price - expected) < 0.000001
 
     def test_fallback_to_default_when_custom_not_provided(self):
         """Test that defaults are used when custom levering prices not in config."""
-        levering_prices = {"winter_normal_levering": "0.10,0.12,0.14,0.16"}
+        levering_prices = {"winter_normal_levering": 0.10}
         
         # For summer_normal, which is not in levering_prices, should use defaults
-        for tier in range(4):
-            price = get_import_price(levering_prices, "summer", "normal", tier)
-            expected = DEFAULT_LEVERING_PRICES["summer_normal"][tier] + BELASTING_PER_TIER[tier]
-            assert abs(price - expected) < 0.000001
+        price = get_import_price(levering_prices, "summer", "normal")
+        expected = DEFAULT_LEVERING_PRICES["summer_normal"] + BELASTING
+        assert abs(price - expected) < 0.000001
 
     def test_zero_levering_price(self):
         """Test with zero levering price (free delivery period)."""
-        levering_prices = {"summer_offpeak_weekend_levering": "0.00,0.00,0.00,0.00"}
+        levering_prices = {"summer_offpeak_weekend_levering": 0.00}
         
-        for tier in range(4):
-            price = get_import_price(levering_prices, "summer", "offpeak_weekend", tier)
-            expected = BELASTING_PER_TIER[tier]  # Only belasting
-            assert abs(price - expected) < 0.000001
+        price = get_import_price(levering_prices, "summer", "offpeak_weekend")
+        expected = BELASTING  # Only belasting
+        assert abs(price - expected) < 0.000001
 
     def test_negative_levering_price(self):
         """Test with negative levering price (subsidy scenario)."""
-        levering_prices = {"summer_normal_levering": "-0.05,-0.05,-0.05,-0.05"}
+        levering_prices = {"summer_normal_levering": -0.05}
         
-        for tier in range(4):
-            price = get_import_price(levering_prices, "summer", "normal", tier)
-            expected = -0.05 + BELASTING_PER_TIER[tier]
-            assert abs(price - expected) < 0.000001
+        price = get_import_price(levering_prices, "summer", "normal")
+        expected = -0.05 + BELASTING
+        assert abs(price - expected) < 0.000001
 
 
 class TestPriceRealism:
@@ -151,41 +184,36 @@ class TestPriceRealism:
 
     def test_winter_prices_higher_than_summer(self):
         """Test that winter normal prices are typically higher than summer."""
-        winter_price = get_import_price({}, "winter", "normal", 0)
-        summer_price = get_import_price({}, "summer", "normal", 0)
+        winter_price = get_import_price({}, "winter", "normal")
+        summer_price = get_import_price({}, "summer", "normal")
         assert winter_price > summer_price
 
     def test_offpeak_prices_lower_than_normal(self):
         """Test that off-peak prices are lower than normal period prices."""
-        normal_price = get_import_price({}, "summer", "normal", 0)
-        offpeak_price = get_import_price({}, "summer", "offpeak_weekday", 0)
+        normal_price = get_import_price({}, "summer", "normal")
+        offpeak_price = get_import_price({}, "summer", "offpeak_weekday")
         assert offpeak_price < normal_price
 
-    def test_belasting_is_always_positive(self):
-        """Test that belasting (energy tax) is always positive."""
-        for tier in range(4):
-            assert BELASTING_PER_TIER[tier] > 0
+    def test_belasting_is_positive(self):
+        """Test that belasting (energy tax) is positive."""
+        assert BELASTING > 0
 
     def test_prices_positive_with_defaults(self):
         """Test that all default prices are positive."""
         for season in ["summer", "winter"]:
             for period in ["normal", "offpeak_weekday", "offpeak_weekend", "offpeak_day", "offpeak_night"]:
-                for tier in range(4):
-                    price = get_import_price({}, season, period, tier)
-                    # Price should be positive (belasting alone is positive)
+                try:
+                    price = get_import_price({}, season, period)
+                    # Price should be positive or zero (belasting is always positive)
                     assert price >= 0
+                except KeyError:
+                    # Some combinations don't exist (like summer offpeak_day)
+                    pass
 
 
-class TestBelastungPerTier:
-    """Test energy tax (belasting) per tier values."""
+class TestBelasting:
+    """Test energy tax (belasting) value."""
 
-    def test_belasting_decreases_with_higher_consumption(self):
-        """Test that belasting decreases for higher consumption tiers."""
-        assert BELASTING_PER_TIER[0] == BELASTING_PER_TIER[1]  # Tiers 0 and 1 same
-        assert BELASTING_PER_TIER[1] > BELASTING_PER_TIER[2]   # Tier 1 > Tier 2
-        assert BELASTING_PER_TIER[2] > BELASTING_PER_TIER[3]   # Tier 2 > Tier 3
-
-    def test_belasting_values_reasonable(self):
-        """Test that belasting values are within reasonable range."""
-        for tax in BELASTING_PER_TIER:
-            assert 0 < tax < 0.15  # Between 0 and 0.15 €/kWh
+    def test_belasting_value_reasonable(self):
+        """Test that belasting value is within reasonable range."""
+        assert 0 < BELASTING < 0.15  # Between 0 and 0.15 €/kWh

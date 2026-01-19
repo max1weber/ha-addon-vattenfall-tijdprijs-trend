@@ -3,12 +3,15 @@
 """Tests for sensor entities."""
 
 import pytest
+from datetime import datetime
 from unittest.mock import MagicMock, patch, AsyncMock
 
 from custom_components.vattenfall_tijdprijs.sensor import (
     async_setup_entry,
     PriceSensor,
     FixedCostSensor,
+    CurrentPriceSensor,
+    HourlyPriceSensor,
 )
 from custom_components.vattenfall_tijdprijs.const import (
     CONF_EXPORT_COMPENSATION,
@@ -19,6 +22,91 @@ from custom_components.vattenfall_tijdprijs.const import (
     DEFAULT_UNIT_PRICE,
     DEFAULT_UNIT_FIXED,
 )
+
+
+class TestCurrentPriceSensor:
+    """Test CurrentPriceSensor entity."""
+    
+    def test_current_price_sensor_initialization(self):
+        """Test CurrentPriceSensor initializes correctly."""
+        config_data = {}
+        sensor = CurrentPriceSensor(config_data, "Test Current Price")
+        
+        assert sensor._attr_name == "Test Current Price"
+        assert sensor._attr_native_unit_of_measurement == DEFAULT_UNIT_PRICE
+        assert sensor._attr_icon == "mdi:currency-eur"
+    
+    @patch('custom_components.vattenfall_tijdprijs.sensor.datetime')
+    def test_current_price_value(self, mock_datetime):
+        """Test that current price is calculated correctly."""
+        mock_datetime.now.return_value = datetime(2024, 6, 10, 14, 0)  # Summer weekday 14:00
+        
+        config_data = {}
+        sensor = CurrentPriceSensor(config_data, "Test")
+        
+        price = sensor.native_value
+        assert isinstance(price, float)
+        assert price > 0
+    
+    @patch('custom_components.vattenfall_tijdprijs.sensor.datetime')
+    def test_current_price_attributes(self, mock_datetime):
+        """Test extra state attributes."""
+        mock_datetime.now.return_value = datetime(2024, 6, 10, 14, 0)
+        
+        config_data = {}
+        sensor = CurrentPriceSensor(config_data, "Test")
+        
+        attrs = sensor.extra_state_attributes
+        assert "season" in attrs
+        assert "period" in attrs
+        assert "hour" in attrs
+        assert attrs["season"] == "summer"
+        assert attrs["hour"] == 14
+
+
+class TestHourlyPriceSensor:
+    """Test HourlyPriceSensor entity."""
+    
+    def test_hourly_price_sensor_initialization(self):
+        """Test HourlyPriceSensor initializes correctly."""
+        config_data = {}
+        sensor = HourlyPriceSensor(config_data, "Test Hourly Prices")
+        
+        assert sensor._attr_name == "Test Hourly Prices"
+        assert sensor._attr_native_unit_of_measurement == DEFAULT_UNIT_PRICE
+        assert sensor._attr_icon == "mdi:chart-line"
+    
+    @patch('custom_components.vattenfall_tijdprijs.sensor.datetime')
+    def test_hourly_price_attributes(self, mock_datetime):
+        """Test that hourly prices are in attributes."""
+        mock_datetime.now.return_value = datetime(2024, 6, 10, 14, 0)
+        
+        config_data = {}
+        sensor = HourlyPriceSensor(config_data, "Test")
+        
+        attrs = sensor.extra_state_attributes
+        assert "hourly_prices" in attrs
+        assert "forecast_hours" in attrs
+        assert "last_update" in attrs
+        assert len(attrs["hourly_prices"]) == 24
+        assert attrs["forecast_hours"] == 24
+    
+    @patch('custom_components.vattenfall_tijdprijs.sensor.datetime')
+    def test_hourly_prices_structure(self, mock_datetime):
+        """Test structure of hourly price data."""
+        mock_datetime.now.return_value = datetime(2024, 6, 10, 14, 0)
+        
+        config_data = {}
+        sensor = HourlyPriceSensor(config_data, "Test")
+        
+        hourly_prices = sensor.extra_state_attributes["hourly_prices"]
+        first_hour = hourly_prices[0]
+        
+        assert "time" in first_hour
+        assert "hour" in first_hour
+        assert "price" in first_hour
+        assert "period" in first_hour
+        assert "season" in first_hour
 
 
 class TestPriceSensor:
@@ -116,8 +204,8 @@ class TestAsyncSetupEntry:
         # Get the entities that were added
         added_entities = async_add_entities.call_args[0][0]
         
-        # Should have 5 sensors (2 price sensors + 3 fixed cost sensors)
-        assert len(added_entities) == 5
+        # Should have 7 sensors (2 dynamic + 2 export + 3 fixed cost)
+        assert len(added_entities) == 7
 
     async def test_setup_entry_sensor_names(self):
         """Test that setup_entry creates sensors with correct names."""
@@ -138,6 +226,8 @@ class TestAsyncSetupEntry:
         added_entities = async_add_entities.call_args[0][0]
         sensor_names = [sensor._attr_name for sensor in added_entities]
         
+        assert "Huidige Importprijs" in sensor_names
+        assert "Importprijs per uur" in sensor_names
         assert "Terugleververgoeding" in sensor_names
         assert "Terugleverkosten" in sensor_names
         assert "Vaste leveringskosten" in sensor_names
@@ -164,8 +254,9 @@ class TestAsyncSetupEntry:
         
         added_entities = async_add_entities.call_args[0][0]
         
-        # Find sensors by name and check their values
-        sensor_values = {sensor._attr_name: sensor._attr_native_value for sensor in added_entities}
+        # Find static sensors by name and check their values
+        static_sensors = [s for s in added_entities if hasattr(s, '_attr_native_value') and not callable(getattr(s, 'native_value', None))]
+        sensor_values = {sensor._attr_name: sensor._attr_native_value for sensor in static_sensors}
         
         assert sensor_values["Terugleververgoeding"] == 0.15
         assert sensor_values["Terugleverkosten"] == 0.08

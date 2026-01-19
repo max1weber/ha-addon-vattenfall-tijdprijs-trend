@@ -19,18 +19,18 @@ Home Assistant integratie voor Vattenfall TijdPrijs dynamische energieprijzen.
 Deze integratie biedt geavanceerde energieprijsberekening voor Vattenfall TijdPrijs met ondersteuning voor:
 
 - **Tijdsgebonden Tarieven** - Verschillende tarieven voor zomer/winter en normale/dal perioden
-- **Verbruikstiers** - Aangepaste prijzen op basis van jaarlijks verbruik (0-2900, 2900-10000, 10000-50000, 50000+ kWh)
+- **Dynamische Prijzen** - Real-time prijsberekening op basis van huidige tijd en daluurperiode
+- **24-uurs Voorspelling** - Uurlijkse prijzen voor de komende 24 uur voor dashboardvisualisaties
 - **Vaste Kosten** - Dagelijkse vaste leveringskosten, systeembeheerkosten en belastingvermindering
 - **Teruglever Tarieven** - Vergoeding en kosten voor teruggeleverde stroom
-- **Sensorintegratie** - Automatische verbruikstracking via Home Assistant sensoren
 
 ### Prijsberekening
 
 De integratie berekent energieprijzen op basis van:
 - Zomer/winter seizoen (april-september = zomer, oktober-maart = winter)
 - Dagtijden (normaal, dal doordeweeks, dal weekend)
-- Jaarlijks verbruik (bepaalt het tarieftier)
 - Energiebelasting + leveringstarieven (beide inclusief 21% BTW)
+- Real-time berekening: de huidige prijs wordt dynamisch berekend op basis van de actuele tijd
 
 ### Standaardwaarden
 
@@ -62,10 +62,9 @@ Alle configuratievelden hebben redelijke standaardwaarden vooraf ingesteld:
 
 De configuratiewizard begeleidt je door de volgende stappen:
 
-1. **Jaarverbruik** - Voer uw geschatte jaarlijks verbruik in (bepaalt het tarieftier) of link een bestaande sensor
-2. **Vaste Kosten** - Configureer dagelijkse vaste kosten (standaardwaarden zijn vooraf ingevuld)
-3. **Leveringstarieven** (optioneel) - Pas de leveringstarieven aan voor elke periode/tier of gebruik standaardwaarden
-4. **Teruglever Tarieven** - Stel de vergoeding en kosten voor teruggeleverde stroom in
+1. **Vaste Kosten** - Configureer dagelijkse vaste kosten (standaardwaarden zijn vooraf ingevuld)
+2. **Leveringstarieven** (optioneel) - Pas de leveringstarieven aan voor elke periode of gebruik standaardwaarden
+3. **Teruglever Tarieven** - Stel de vergoeding en kosten voor teruggeleverde stroom in
 
 Alle velden hebben standaardwaarden, dus je kunt de configuratie direct voltooien of afzonderlijke velden aanpassen.
 
@@ -73,12 +72,36 @@ Alle velden hebben standaardwaarden, dus je kunt de configuratie direct voltooie
 
 Na configuratie zijn de volgende entiteiten beschikbaar in Home Assistant:
 
-- `sensor.vattenfall_tijdprijs_*_importprijs` - Huidige importprijs (€/kWh)
-- `sensor.vattenfall_tijdprijs_*_terugleververgoeding` - Teruglever vergoeding (€/kWh)
-- `sensor.vattenfall_tijdprijs_*_terugleverkosten` - Teruglever kosten (€/kWh)
-- `sensor.vattenfall_tijdprijs_*_vaste_leveringskosten` - Dagelijkse vaste leveringskosten (€/dag)
-- `sensor.vattenfall_tijdprijs_*_vaste_netbeheerkosten` - Dagelijkse systeembeheerkosten (€/dag)
-- `sensor.vattenfall_tijdprijs_*_vaste_terugleverkosten` - Dagelijkse teruglever vaste kosten (€/dag)
+#### Dynamische Prijssensoren
+- `sensor.vattenfall_tijdprijs_huidige_importprijs` - Huidige importprijs op basis van tijd van dag (€/kWh)
+- `sensor.vattenfall_tijdprijs_importprijs_per_uur` - 24-uurs prijsvoorspelling met uurlijkse waarden
+
+#### Teruglever Sensoren
+- `sensor.vattenfall_tijdprijs_terugleververgoeding` - Teruglever vergoeding (€/kWh)
+- `sensor.vattenfall_tijdprijs_terugleverkosten` - Teruglever kosten (€/kWh)
+
+#### Vaste Kosten Sensoren
+- `sensor.vattenfall_tijdprijs_vaste_leveringskosten` - Dagelijkse vaste leveringskosten (€/dag)
+- `sensor.vattenfall_tijdprijs_vaste_netbeheerkosten` - Dagelijkse systeembeheerkosten (€/dag)
+- `sensor.vattenfall_tijdprijs_vaste_belastingvermindering` - Dagelijkse belastingvermindering (€/dag)
+
+**Let op:** De `Huidige Importprijs` sensor wordt dynamisch berekend op basis van de actuele tijd en het seizoen (zomer/winter) en daluren periode.
+
+De `Importprijs per uur` sensor bevat in de attributen een lijst met 24 uurwaarden voor dashboardvisualisaties:
+```yaml
+hourly_prices:
+  - time: "2024-01-15T14:00:00"
+    hour: 14
+    price: 0.25184
+    period: "normal"
+    season: "winter"
+  - time: "2024-01-15T15:00:00"
+    hour: 15
+    price: 0.25184
+    period: "normal"
+    season: "winter"
+  # ... 22 more hours
+```
 
 ### Gebruik in Automatiseringen
 
@@ -130,18 +153,18 @@ Home Assistant integration for Vattenfall TijdPrijs dynamic energy pricing with 
 This integration provides advanced energy price calculations with:
 
 - **Time-of-Use Pricing** - Different rates for summer/winter and normal/off-peak periods
-- **Consumption Tiers** - Custom pricing based on annual consumption (0-2900, 2900-10000, 10000-50000, 50000+ kWh)
+- **Dynamic Pricing** - Real-time price calculation based on current time and off-peak periods
+- **24-Hour Forecast** - Hourly prices for the next 24 hours for dashboard visualizations
 - **Fixed Costs** - Daily fixed delivery costs, grid management costs, and tax reductions
 - **Export Pricing** - Compensation and costs for exported electricity
-- **Sensor Integration** - Automatic consumption tracking via Home Assistant sensors
 
 ### Price Calculation
 
 The integration calculates energy prices based on:
 - Season (summer: April-September, winter: October-March)
 - Time of day (normal, off-peak weekday, off-peak weekend)
-- Annual consumption (determines your pricing tier)
 - Energy tax + delivery rates (both including 21% VAT)
+- Real-time calculation: current price is dynamically calculated based on the actual time
 
 ### Default Values
 
@@ -173,10 +196,9 @@ All configuration fields come with reasonable default values pre-filled:
 
 The configuration wizard guides you through the following steps:
 
-1. **Annual Consumption** - Enter your estimated annual consumption (determines pricing tier) or link an existing sensor
-2. **Fixed Costs** - Configure daily fixed costs (default values are pre-filled)
-3. **Delivery Rates** (optional) - Customize delivery rates for each period/tier or use standard rates
-4. **Export Rates** - Set compensation and costs for exported electricity
+1. **Fixed Costs** - Configure daily fixed costs (default values are pre-filled)
+2. **Delivery Rates** (optional) - Customize delivery rates for each period or use standard rates
+3. **Export Rates** - Set compensation and costs for exported electricity
 
 All fields have default values, so you can complete the configuration immediately or adjust individual fields as needed.
 
@@ -211,12 +233,36 @@ automation:
 
 After configuration, the following entities are available in Home Assistant:
 
-- `sensor.vattenfall_tijdprijs_*_importprijs` - Current import price (€/kWh)
-- `sensor.vattenfall_tijdprijs_*_terugleververgoeding` - Export compensation (€/kWh)
-- `sensor.vattenfall_tijdprijs_*_terugleverkosten` - Export costs (€/kWh)
-- `sensor.vattenfall_tijdprijs_*_vaste_leveringskosten` - Daily fixed delivery costs (€/day)
-- `sensor.vattenfall_tijdprijs_*_vaste_netbeheerkosten` - Daily grid management costs (€/day)
-- `sensor.vattenfall_tijdprijs_*_vaste_terugleverkosten` - Daily fixed export costs (€/day)
+#### Dynamic Price Sensors
+- `sensor.vattenfall_tijdprijs_huidige_importprijs` - Current import price based on time-of-use (€/kWh)
+- `sensor.vattenfall_tijdprijs_importprijs_per_uur` - 24-hour price forecast with hourly values
+
+#### Export Sensors
+- `sensor.vattenfall_tijdprijs_terugleververgoeding` - Export compensation (€/kWh)
+- `sensor.vattenfall_tijdprijs_terugleverkosten` - Export costs (€/kWh)
+
+#### Fixed Cost Sensors
+- `sensor.vattenfall_tijdprijs_vaste_leveringskosten` - Daily fixed delivery costs (€/day)
+- `sensor.vattenfall_tijdprijs_vaste_netbeheerkosten` - Daily grid management costs (€/day)
+- `sensor.vattenfall_tijdprijs_vaste_belastingvermindering` - Daily tax reduction (€/day)
+
+**Note:** The `Huidige Importprijs` sensor is dynamically calculated based on the current time, season (summer/winter), and time-of-use period.
+
+The `Importprijs per uur` sensor provides 24-hour price data in its attributes for dashboard visualizations:
+```yaml
+hourly_prices:
+  - time: "2024-01-15T14:00:00"
+    hour: 14
+    price: 0.25184
+    period: "normal"
+    season: "winter"
+  - time: "2024-01-15T15:00:00"
+    hour: 15
+    price: 0.25184
+    period: "normal"
+    season: "winter"
+  # ... 22 more hours
+```
 
 ### Energy Dashboard Integration
 

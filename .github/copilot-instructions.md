@@ -4,7 +4,6 @@
 
 This is a Home Assistant custom integration for Vattenfall TijdPrijs dynamic energy pricing in the Netherlands. The integration calculates energy import/export prices based on:
 - Time-of-use periods (summer/winter, normal/off-peak)
-- Usage tiers based on annual consumption (0-2900, 2900-10000, 10000-50000, 50000+ kWh)
 - Fixed daily costs (delivery, tax reduction, grid management)
 - Export compensation and costs for returned electricity
 
@@ -86,26 +85,20 @@ tests/                    # Test suite
 
 ### Pricing Logic
 
-1. **Tier Calculation**: Annual consumption determines the tier (0-3)
-   - 0-2900 kWh: tier 0
-   - 2900-10000 kWh: tier 1
-   - 10000-50000 kWh: tier 2
-   - 50000+ kWh: tier 3
-
-2. **Price Components**:
-   - **Belasting** (tax): Fixed per tier, same for all periods
-   - **Levering** (delivery): Varies by period and tier, configurable
+1. **Price Components**:
+   - **Belasting** (tax): Fixed energy tax, same for all periods
+   - **Levering** (delivery): Varies by period, configurable
    - **Total import price** = Levering + Belasting
 
-3. **Seasons**:
+2. **Seasons**:
    - Summer: April-September
    - Winter: October-March
 
-4. **Time Periods** (defined in `TOU_PERIODS` in `const.py`):
+3. **Time Periods** (defined in `TOU_PERIODS` in `const.py`):
    - Summer: normal, off_peak_weekday, off_peak_weekend
    - Winter: normal, off_peak_day, off_peak_night
 
-5. **Currency**: All prices in EUR (€), inclusive of 21% VAT
+4. **Currency**: All prices in EUR (€), inclusive of 21% VAT
 
 ### Testing
 
@@ -129,18 +122,22 @@ tests/                    # Test suite
 
 The integration uses a multi-step configuration flow:
 
-1. **Annual Consumption**: Either enter a value or link to an existing sensor
+1. **Annual Consumption**: Enter annual consumption value in kWh (determines pricing tier)
 2. **Fixed Costs**: Daily delivery costs, tax reduction, grid costs
 3. **Delivery Tariffs** (optional): Configure levering prices per period/tier
 4. **Export Tariffs**: Compensation and costs for returned electricity
 
 All configuration values are stored in `entry.data` dictionary with keys defined in `const.py` (CONF_* constants).
+Fixed Costs**: Daily delivery costs, tax reduction, grid costs
+2. **Delivery Tariffs** (optional): Configure levering prices per period
+3. **Export Tariffs**: Compensation and costs for returned electricity
 
-## Common Tasks
+All configuration values are stored in `entry.data` dictionary with keys defined in `const.py` (CONF_* constants).
 
-### Adding a New Sensor
+### Future Enhancements (Post v1.1.0)
 
-1. Define the sensor class in `sensor.py` inheriting from `SensorEntity`
+- **Consumption Sensor Integration**: Ability to link to an existing Home Assistant sensor for automatic annual consumption tracking
+- **Usage Tier Pricing**: Dynamic pricing based on annual consumption tiers (0-2900, 2900-10000, 10000-50000, 50000+ kWh)
 2. Set appropriate `_attr_*` properties
 3. Add to the sensors list in `async_setup_entry`
 4. Add corresponding configuration keys to `const.py` if needed
@@ -149,8 +146,8 @@ All configuration values are stored in `entry.data` dictionary with keys defined
 
 ### Modifying Pricing Logic
 
-1. Update `BELASTING_PER_TIER` or `DEFAULT_LEVERING_PRICES` in `pricing_data.py`
-2. Adjust calculation functions (`get_tier_index`, `get_import_price`)
+1. Update `BELASTING` or `DEFAULT_LEVERING_PRICES` in `pricing_data.py`
+2. Adjust calculation function (`get_import_price`)
 3. Update corresponding tests in `test_pricing_data.py`
 4. Update README.md if default values change
 
