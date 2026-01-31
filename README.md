@@ -20,9 +20,11 @@ Deze integratie biedt geavanceerde energieprijsberekening voor Vattenfall TijdPr
 
 - **Tijdsgebonden Tarieven** - Verschillende tarieven voor zomer/winter en normale/dal perioden
 - **Dynamische Prijzen** - Real-time prijsberekening op basis van huidige tijd en daluurperiode
-- **24-uurs Voorspelling** - Uurlijkse prijzen voor de komende 24 uur voor dashboardvisualisaties
+- **48-uurs Voorspelling** - Uurlijkse prijzen voor de komende 48 uur met kleurcodering voor dashboardvisualisaties
+- **ApexCharts Integratie** - Klaar-voor-gebruik dataformaat voor ApexCharts met kleurcodering (groen voor lage, rood voor hoge tarieven)
 - **Vaste Kosten** - Dagelijkse vaste leveringskosten, systeembeheerkosten en belastingvermindering
 - **Teruglever Tarieven** - Vergoeding en kosten voor teruggeleverde stroom
+- **Unieke Entity ID's** - Alle entiteiten hebben unieke ID's voor juiste Home Assistant entity tracking
 
 ### Prijsberekening
 
@@ -74,7 +76,7 @@ Na configuratie zijn de volgende entiteiten beschikbaar in Home Assistant:
 
 #### Dynamische Prijssensoren
 - `sensor.vattenfall_tijdprijs_huidige_importprijs` - Huidige importprijs op basis van tijd van dag (€/kWh)
-- `sensor.vattenfall_tijdprijs_importprijs_per_uur` - 24-uurs prijsvoorspelling met uurlijkse waarden
+- `sensor.vattenfall_tijdprijs_importprijs_per_uur` - 48-uurs prijsvoorspelling met uurlijkse waarden en ApexCharts data
 
 #### Teruglever Sensoren
 - `sensor.vattenfall_tijdprijs_terugleververgoeding` - Teruglever vergoeding (€/kWh)
@@ -87,9 +89,11 @@ Na configuratie zijn de volgende entiteiten beschikbaar in Home Assistant:
 
 **Let op:** De `Huidige Importprijs` sensor wordt dynamisch berekend op basis van de actuele tijd en het seizoen (zomer/winter) en daluren periode.
 
-De `Importprijs per uur` sensor bevat in de attributen een lijst met 24 uurwaarden voor dashboardvisualisaties:
+De `Importprijs per uur` sensor bevat in de attributen een lijst met 48 uurwaarden voor dashboardvisualisaties:
+
+**Uurlijkse Prijsdata:**
 ```yaml
-hourly_prices:
+hourly_prices:  # 48 uur gedetailleerde prijsdata
   - time: "2024-01-15T14:00:00"
     hour: 14
     price: 0.25184
@@ -100,8 +104,45 @@ hourly_prices:
     price: 0.25184
     period: "normal"
     season: "winter"
-  # ... 22 more hours
+  # ... 46 meer uren
+
+median_price: 0.23456  # Drempel voor kleurcodering
+
+apexcharts_data:  # Vooraf geformatteerd voor ApexCharts
+  - x: "2024-01-15T14:00:00"
+    y: 0.25184
+    fillColor: "#e74c3c"  # Rood voor hoog tarief (boven mediaan)
+  - x: "2024-01-15T15:00:00"
+    y: 0.20000
+    fillColor: "#27ae60"  # Groen voor laag tarief (op of onder mediaan)
+  # ... 46 meer uren
 ```
+
+**ApexCharts Kaart Voorbeeld:**
+```yaml
+type: custom:apexcharts-card
+header:
+  title: Vattenfall Importprijs - Komende 48 uur
+  show: true
+graph:
+  title:
+    show: true
+    text: Importprijs per uur
+  show:
+    graph: column
+  height: 300
+series:
+  - entity: sensor.vattenfall_tijdprijs_importprijs_per_uur
+    attribute: apexcharts_data
+    name: Importprijs (€/kWh)
+    type: column
+    stroke_width: 0
+    color: '#3498db'
+```
+
+De kleurcodering toont automatisch:
+- 🟢 **Groen** (#27ae60) voor lage/gunstige tarieven (≤ mediaan prijs)
+- 🔴 **Rood** (#e74c3c) voor hoge/dure tarieven (> mediaan prijs)
 
 ### Gebruik in Automatiseringen
 
@@ -154,9 +195,11 @@ This integration provides advanced energy price calculations with:
 
 - **Time-of-Use Pricing** - Different rates for summer/winter and normal/off-peak periods
 - **Dynamic Pricing** - Real-time price calculation based on current time and off-peak periods
-- **24-Hour Forecast** - Hourly prices for the next 24 hours for dashboard visualizations
+- **48-Hour Forecast** - Hourly prices for the next 48 hours with color-coded tariffs for dashboard visualizations
+- **ApexCharts Integration** - Ready-to-use data format for ApexCharts with color coding (green for low, red for high tariffs)
 - **Fixed Costs** - Daily fixed delivery costs, grid management costs, and tax reductions
 - **Export Pricing** - Compensation and costs for exported electricity
+- **Unique Entity IDs** - All entities have unique IDs for proper Home Assistant entity tracking
 
 ### Price Calculation
 
@@ -235,7 +278,7 @@ After configuration, the following entities are available in Home Assistant:
 
 #### Dynamic Price Sensors
 - `sensor.vattenfall_tijdprijs_huidige_importprijs` - Current import price based on time-of-use (€/kWh)
-- `sensor.vattenfall_tijdprijs_importprijs_per_uur` - 24-hour price forecast with hourly values
+- `sensor.vattenfall_tijdprijs_importprijs_per_uur` - 48-hour price forecast with hourly values and ApexCharts data
 
 #### Export Sensors
 - `sensor.vattenfall_tijdprijs_terugleververgoeding` - Export compensation (€/kWh)
@@ -248,9 +291,11 @@ After configuration, the following entities are available in Home Assistant:
 
 **Note:** The `Huidige Importprijs` sensor is dynamically calculated based on the current time, season (summer/winter), and time-of-use period.
 
-The `Importprijs per uur` sensor provides 24-hour price data in its attributes for dashboard visualizations:
+The `Importprijs per uur` sensor provides 48-hour price data in its attributes for dashboard visualizations:
+
+**Hourly Prices Data:**
 ```yaml
-hourly_prices:
+hourly_prices:  # 48 hours of detailed price data
   - time: "2024-01-15T14:00:00"
     hour: 14
     price: 0.25184
@@ -261,8 +306,45 @@ hourly_prices:
     price: 0.25184
     period: "normal"
     season: "winter"
-  # ... 22 more hours
+  # ... 46 more hours
+
+median_price: 0.23456  # Threshold for color coding
+
+apexcharts_data:  # Pre-formatted for ApexCharts
+  - x: "2024-01-15T14:00:00"
+    y: 0.25184
+    fillColor: "#e74c3c"  # Red for high tariff (above median)
+  - x: "2024-01-15T15:00:00"
+    y: 0.20000
+    fillColor: "#27ae60"  # Green for low tariff (at or below median)
+  # ... 46 more hours
 ```
+
+**ApexCharts Card Example:**
+```yaml
+type: custom:apexcharts-card
+header:
+  title: Vattenfall Importprijs - Komende 48 uur
+  show: true
+graph:
+  title:
+    show: true
+    text: Importprijs per uur
+  show:
+    graph: column
+  height: 300
+series:
+  - entity: sensor.vattenfall_tijdprijs_importprijs_per_uur
+    attribute: apexcharts_data
+    name: Importprijs (€/kWh)
+    type: column
+    stroke_width: 0
+    color: '#3498db'
+```
+
+The color coding automatically shows:
+- 🟢 **Green** (#27ae60) for low/favorable tariffs (≤ median price)
+- 🔴 **Red** (#e74c3c) for high/expensive tariffs (> median price)
 
 ### Energy Dashboard Integration
 

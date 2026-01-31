@@ -76,6 +76,10 @@ sensor_mock = MagicMock()
 sensor_mock.SensorEntity = MockSensorEntity
 components_mock.sensor = sensor_mock
 
+const_mock = MagicMock()
+const_mock.Platform = MagicMock()
+homeassistant_mock.const = const_mock
+
 sys.modules['homeassistant'] = homeassistant_mock
 sys.modules['homeassistant.config_entries'] = config_entries_mock
 sys.modules['homeassistant.core'] = core_mock
@@ -84,6 +88,7 @@ sys.modules['homeassistant.helpers.config_validation'] = config_validation_mock
 sys.modules['homeassistant.helpers.selector'] = selector_mock
 sys.modules['homeassistant.components'] = components_mock
 sys.modules['homeassistant.components.sensor'] = sensor_mock
+sys.modules['homeassistant.const'] = const_mock
 
 
 @pytest.fixture
