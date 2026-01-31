@@ -74,9 +74,11 @@ Alle velden hebben standaardwaarden, dus je kunt de configuratie direct voltooie
 
 Na configuratie zijn de volgende entiteiten beschikbaar in Home Assistant:
 
-#### Dynamische Prijssensoren
-- `sensor.vattenfall_tijdprijs_huidige_importprijs` - Huidige importprijs op basis van tijd van dag (€/kWh)
-- `sensor.vattenfall_tijdprijs_importprijs_per_uur` - 48-uurs prijsvoorspelling met uurlijkse waarden en ApexCharts data
+#### Dynamic Price Sensors
+- `sensor.vattenfall_tijdprijs_huidige_importprijs` - Current import price based on time-of-use (€/kWh)
+- `sensor.vattenfall_tijdprijs_importprijs_per_uur` - 48-hour price forecast with hourly values and ApexCharts data
+
+> **Note:** Entity IDs can be customized in Home Assistant (Settings → Devices & Services → Entities) if you prefer shorter names like `sensor.importprijs_per_uur`
 
 #### Teruglever Sensoren
 - `sensor.vattenfall_tijdprijs_terugleververgoeding` - Teruglever vergoeding (€/kWh)
@@ -118,26 +120,23 @@ apexcharts_data:  # Vooraf geformatteerd voor ApexCharts
   # ... 46 meer uren
 ```
 
-**ApexCharts Kaart Voorbeeld:**
+**ApexCharts Card Example:**
 ```yaml
 type: custom:apexcharts-card
 header:
   title: Vattenfall Importprijs - Komende 48 uur
   show: true
-graph:
-  title:
-    show: true
-    text: Importprijs per uur
-  show:
-    graph: column
-  height: 300
+apex_config:
+  chart:
+    height: 300
+  xaxis:
+    type: datetime
 series:
   - entity: sensor.vattenfall_tijdprijs_importprijs_per_uur
     attribute: apexcharts_data
     name: Importprijs (€/kWh)
     type: column
     stroke_width: 0
-    color: '#3498db'
 ```
 
 De kleurcodering toont automatisch:
@@ -280,6 +279,8 @@ After configuration, the following entities are available in Home Assistant:
 - `sensor.vattenfall_tijdprijs_huidige_importprijs` - Current import price based on time-of-use (€/kWh)
 - `sensor.vattenfall_tijdprijs_importprijs_per_uur` - 48-hour price forecast with hourly values and ApexCharts data
 
+> **Note:** Entity IDs can be customized in Home Assistant (Settings → Devices & Services → Entities) if you prefer shorter names like `sensor.importprijs_per_uur`
+
 #### Export Sensors
 - `sensor.vattenfall_tijdprijs_terugleververgoeding` - Export compensation (€/kWh)
 - `sensor.vattenfall_tijdprijs_terugleverkosten` - Export costs (€/kWh)
@@ -326,20 +327,17 @@ type: custom:apexcharts-card
 header:
   title: Vattenfall Importprijs - Komende 48 uur
   show: true
-graph:
-  title:
-    show: true
-    text: Importprijs per uur
-  show:
-    graph: column
-  height: 300
+apex_config:
+  chart:
+    height: 300
+  xaxis:
+    type: datetime
 series:
   - entity: sensor.vattenfall_tijdprijs_importprijs_per_uur
     attribute: apexcharts_data
     name: Importprijs (€/kWh)
     type: column
     stroke_width: 0
-    color: '#3498db'
 ```
 
 The color coding automatically shows:

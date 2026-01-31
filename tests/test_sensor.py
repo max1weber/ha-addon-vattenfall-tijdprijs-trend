@@ -47,6 +47,10 @@ class TestCurrentPriceSensor:
         entry_id = "test_entry_123"
         sensor = CurrentPriceSensor(config_data, entry_id, "Test", "import_price")
         
+        # Call async_update to populate value
+        import asyncio
+        asyncio.run(sensor.async_update())
+        
         price = sensor.native_value
         assert isinstance(price, float)
         assert price > 0
@@ -59,6 +63,10 @@ class TestCurrentPriceSensor:
         config_data = {}
         entry_id = "test_entry_123"
         sensor = CurrentPriceSensor(config_data, entry_id, "Test", "import_price")
+        
+        # Call async_update to populate attributes
+        import asyncio
+        asyncio.run(sensor.async_update())
         
         attrs = sensor.extra_state_attributes
         assert "season" in attrs
@@ -91,6 +99,10 @@ class TestHourlyPriceSensor:
         entry_id = "test_entry_123"
         sensor = HourlyPriceSensor(config_data, entry_id, "Test", "hourly_prices")
         
+        # Call async_update to populate attributes
+        import asyncio
+        asyncio.run(sensor.async_update())
+        
         attrs = sensor.extra_state_attributes
         assert "hourly_prices" in attrs
         assert "forecast_hours" in attrs
@@ -109,6 +121,10 @@ class TestHourlyPriceSensor:
         config_data = {}
         entry_id = "test_entry_123"
         sensor = HourlyPriceSensor(config_data, entry_id, "Test", "hourly_prices")
+        
+        # Call async_update to populate attributes
+        import asyncio
+        asyncio.run(sensor.async_update())
         
         hourly_prices = sensor.extra_state_attributes["hourly_prices"]
         first_hour = hourly_prices[0]

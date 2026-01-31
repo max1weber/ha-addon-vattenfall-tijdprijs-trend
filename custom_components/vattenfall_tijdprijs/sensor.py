@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from .const import (
     CONF_EXPORT_COSTS,
@@ -41,6 +41,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class CurrentPriceSensor(SensorEntity):
     """Sensor for current import price based on time-of-use."""
     
+    _attr_should_poll = True
+    
     def __init__(self, config_data, entry_id, name, sensor_type):
         """Initialize the sensor."""
         self._config_data = config_data
@@ -50,30 +52,36 @@ class CurrentPriceSensor(SensorEntity):
         self._attr_native_unit_of_measurement = DEFAULT_UNIT_PRICE
         self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_icon = "mdi:currency-eur"
+        self._attr_native_value = None
+        self._attr_extra_state_attributes = {}
         
     @property
     def native_value(self):
         """Return the current price."""
-        now = datetime.now()
-        season = get_season(now)
-        period = get_period(now, season)
-        return round(get_import_price(self._config_data, season, period), 6)
+        return self._attr_native_value
     
-    @property
-    def extra_state_attributes(self):
-        """Return additional state attributes."""
+    async def async_update(self):
+        """Update the sensor every minute."""
         now = datetime.now()
         season = get_season(now)
         period = get_period(now, season)
-        return {
+        self._attr_native_value = round(get_import_price(self._config_data, season, period), 6)
+        self._attr_extra_state_attributes = {
             "season": season,
             "period": period,
             "hour": now.hour,
         }
+    
+    @property
+    def extra_state_attributes(self):
+        """Return additional state attributes."""
+        return self._attr_extra_state_attributes
 
 
 class HourlyPriceSensor(SensorEntity):
-    """Sensor with hourly price forecast for next 24 hours."""
+    """Sensor with hourly price forecast for next 48 hours."""
+    
+    _attr_should_poll = True
     
     def __init__(self, config_data, entry_id, name, sensor_type):
         """Initialize the sensor."""
@@ -83,19 +91,23 @@ class HourlyPriceSensor(SensorEntity):
         self._attr_unique_id = f"{entry_id}_{sensor_type}"
         self._attr_native_unit_of_measurement = DEFAULT_UNIT_PRICE
         self._attr_icon = "mdi:chart-line"
+        self._attr_native_value = None
+        self._attr_extra_state_attributes = {}
         
     @property
     def native_value(self):
         """Return the current hour price."""
+        return self._attr_native_value
+    
+    async def async_update(self):
+        """Update hourly forecast every hour."""
         now = datetime.now()
         season = get_season(now)
         period = get_period(now, season)
-        return round(get_import_price(self._config_data, season, period), 6)
-    
-    @property
-    def extra_state_attributes(self):
-        """Return hourly forecast as attributes."""
-        now = datetime.now()
+        current_price = round(get_import_price(self._config_data, season, period), 6)
+        self._attr_native_value = current_price
+        
+        # Update forecast data
         hourly_data = get_hourly_prices(self._config_data, now, hours=48)
         
         # Calculate median price for determining high/low tariffs
@@ -116,13 +128,18 @@ class HourlyPriceSensor(SensorEntity):
                 "fillColor": color,
             })
         
-        return {
+        self._attr_extra_state_attributes = {
             "hourly_prices": hourly_data,
             "forecast_hours": 48,
             "last_update": now.isoformat(),
             "apexcharts_data": apexcharts_data,
             "median_price": round(median_price, 6),
         }
+    
+    @property
+    def extra_state_attributes(self):
+        """Return hourly forecast as attributes."""
+        return self._attr_extra_state_attributes
 
 
 class PriceSensor(SensorEntity):

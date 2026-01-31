@@ -80,6 +80,10 @@ const_mock = MagicMock()
 const_mock.Platform = MagicMock()
 homeassistant_mock.const = const_mock
 
+util_mock = MagicMock()
+util_mock.dt = MagicMock()
+homeassistant_mock.util = util_mock
+
 sys.modules['homeassistant'] = homeassistant_mock
 sys.modules['homeassistant.config_entries'] = config_entries_mock
 sys.modules['homeassistant.core'] = core_mock
@@ -89,6 +93,7 @@ sys.modules['homeassistant.helpers.selector'] = selector_mock
 sys.modules['homeassistant.components'] = components_mock
 sys.modules['homeassistant.components.sensor'] = sensor_mock
 sys.modules['homeassistant.const'] = const_mock
+sys.modules['homeassistant.util'] = util_mock
 
 
 @pytest.fixture
