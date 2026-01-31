@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 from datetime import datetime, timedelta
+import inspect
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from .const import (
     CONF_EXPORT_COSTS,
@@ -35,7 +36,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
         FixedCostSensor(entry_id, "Vaste netbeheerkosten", data[CONF_FIXED_GRID], "fixed_grid"),
     ]
 
-    async_add_entities(sensors)
+    result = async_add_entities(sensors)
+    if inspect.isawaitable(result):
+        await result
 
 
 class CurrentPriceSensor(SensorEntity):
@@ -115,14 +118,19 @@ class HourlyPriceSensor(SensorEntity):
         sorted_prices = sorted(prices)
         median_price = sorted_prices[len(sorted_prices) // 2]
         
-        # Format data for ApexCharts with color coding
+        # Format data for ApexCharts
         apexcharts_data = []
+        apexcharts_data_colored = []
         for entry in hourly_data:
             price = entry["price"]
             # Color: green for low tariffs, red for high tariffs
             color = "#27ae60" if price <= median_price else "#e74c3c"
-            
-            apexcharts_data.append({
+
+            # ApexCharts-card expects a list of [timestamp, value]
+            apexcharts_data.append([entry["time"], round(price, 6)])
+
+            # Optional richer format for custom cards/scripts
+            apexcharts_data_colored.append({
                 "x": entry["time"],
                 "y": round(price, 6),
                 "fillColor": color,
@@ -133,6 +141,7 @@ class HourlyPriceSensor(SensorEntity):
             "forecast_hours": 48,
             "last_update": now.isoformat(),
             "apexcharts_data": apexcharts_data,
+            "apexcharts_data_colored": apexcharts_data_colored,
             "median_price": round(median_price, 6),
         }
     

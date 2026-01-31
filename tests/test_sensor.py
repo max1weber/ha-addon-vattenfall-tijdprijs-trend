@@ -108,9 +108,11 @@ class TestHourlyPriceSensor:
         assert "forecast_hours" in attrs
         assert "last_update" in attrs
         assert "apexcharts_data" in attrs
+        assert "apexcharts_data_colored" in attrs
         assert "median_price" in attrs
         assert len(attrs["hourly_prices"]) == 48
         assert len(attrs["apexcharts_data"]) == 48
+        assert len(attrs["apexcharts_data_colored"]) == 48
         assert attrs["forecast_hours"] == 48
     
     @patch('custom_components.vattenfall_tijdprijs.sensor.datetime')
@@ -135,18 +137,27 @@ class TestHourlyPriceSensor:
         assert "period" in first_hour
         assert "season" in first_hour
         
-        # Test ApexCharts data format with color coding
+        # Test ApexCharts data format (list of [timestamp, value])
         apexcharts_data = sensor.extra_state_attributes["apexcharts_data"]
         first_chart_entry = apexcharts_data[0]
-        
-        assert "x" in first_chart_entry
-        assert "y" in first_chart_entry
-        assert "fillColor" in first_chart_entry
-        assert isinstance(first_chart_entry["y"], float)
-        assert first_chart_entry["fillColor"] in ["#27ae60", "#e74c3c"]  # Green or red
-        
+
+        assert isinstance(first_chart_entry, list)
+        assert len(first_chart_entry) == 2
+        assert isinstance(first_chart_entry[0], str)
+        assert isinstance(first_chart_entry[1], float)
+
+        # Test colored ApexCharts data format
+        apexcharts_colored = sensor.extra_state_attributes["apexcharts_data_colored"]
+        first_colored_entry = apexcharts_colored[0]
+
+        assert "x" in first_colored_entry
+        assert "y" in first_colored_entry
+        assert "fillColor" in first_colored_entry
+        assert isinstance(first_colored_entry["y"], float)
+        assert first_colored_entry["fillColor"] in ["#27ae60", "#e74c3c"]  # Green or red
+
         # Verify all entries have colors
-        for entry in apexcharts_data:
+        for entry in apexcharts_colored:
             assert entry["fillColor"] in ["#27ae60", "#e74c3c"]
         
         # Verify median_price is present and reasonable
