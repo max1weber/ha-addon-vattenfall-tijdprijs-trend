@@ -111,7 +111,7 @@ class HourlyPriceSensor(SensorEntity):
         self._attr_native_value = current_price
         
         # Update forecast data
-        hourly_data = get_hourly_prices(self._config_data, now, hours=48)
+        hourly_data = get_hourly_prices(self._config_data, now - timedelta(hours=3), hours=51)
         
         # Calculate median price for determining high/low tariffs
         prices = [entry["price"] for entry in hourly_data]
@@ -138,7 +138,7 @@ class HourlyPriceSensor(SensorEntity):
         
         self._attr_extra_state_attributes = {
             "hourly_prices": hourly_data,
-            "forecast_hours": 48,
+            "forecast_hours": 51,
             "last_update": now.isoformat(),
             "apexcharts_data": apexcharts_data,
             "apexcharts_data_colored": apexcharts_data_colored,

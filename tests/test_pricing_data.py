@@ -92,7 +92,18 @@ class TestGetHourlyPrices:
         assert "period" in hour_data
         assert "season" in hour_data
     
-    def test_prices_are_positive(self):
+    def test_timestamps_floored_to_hour(self):
+        """Test that timestamps are always floored to the start of the hour."""
+        start = datetime(2024, 6, 1, 11, 34, 22, 123456)
+        prices = get_hourly_prices({}, start, hours=3)
+
+        for entry in prices:
+            dt = datetime.fromisoformat(entry["time"])
+            assert dt.minute == 0
+            assert dt.second == 0
+            assert dt.microsecond == 0
+
+
         """Test that all prices are positive with defaults."""
         start = datetime(2024, 6, 1, 0, 0)
         prices = get_hourly_prices({}, start)

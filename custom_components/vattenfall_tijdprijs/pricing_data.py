@@ -120,7 +120,10 @@ def get_hourly_prices(levering_prices: dict, start_time: datetime, hours: int = 
         List of dicts with 'time' and 'price' for each hour
     """
     hourly_data = []
-    
+
+    # Floor start_time to the beginning of its hour to ensure clean timestamps
+    start_time = start_time.replace(minute=0, second=0, microsecond=0)
+
     for i in range(hours):
         dt = start_time + timedelta(hours=i)
         season = get_season(dt)
