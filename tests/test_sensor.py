@@ -110,10 +110,10 @@ class TestHourlyPriceSensor:
         assert "apexcharts_data" in attrs
         assert "apexcharts_data_colored" in attrs
         assert "median_price" in attrs
-        assert len(attrs["hourly_prices"]) == 48
-        assert len(attrs["apexcharts_data"]) == 48
-        assert len(attrs["apexcharts_data_colored"]) == 48
-        assert attrs["forecast_hours"] == 48
+        assert len(attrs["hourly_prices"]) == 51
+        assert len(attrs["apexcharts_data"]) == 51
+        assert len(attrs["apexcharts_data_colored"]) == 51
+        assert attrs["forecast_hours"] == 51
     
     @patch('custom_components.vattenfall_tijdprijs.sensor.datetime')
     def test_hourly_prices_structure(self, mock_datetime):
@@ -166,7 +166,29 @@ class TestHourlyPriceSensor:
         assert median_price > 0
 
 
-class TestPriceSensor:
+    @patch('custom_components.vattenfall_tijdprijs.sensor.datetime')
+    def test_hourly_prices_start_3_hours_back_and_floored(self, mock_datetime):
+        """Test that hourly prices start 3 hours before now and are floored to the hour."""
+        mock_datetime.now.return_value = datetime(2024, 6, 10, 14, 34, 22)
+
+        config_data = {}
+        entry_id = "test_entry_123"
+        sensor = HourlyPriceSensor(config_data, entry_id, "Test", "hourly_prices")
+
+        import asyncio
+        asyncio.run(sensor.async_update())
+
+        hourly_prices = sensor.extra_state_attributes["hourly_prices"]
+
+        # First entry should be at 11:00 (14:34 - 3h, floored to hour)
+        from datetime import datetime as real_datetime
+        first_time = real_datetime.fromisoformat(hourly_prices[0]["time"])
+        assert first_time.hour == 11
+        assert first_time.minute == 0
+        assert first_time.second == 0
+        assert first_time.microsecond == 0
+
+
     """Test PriceSensor entity."""
 
     def test_price_sensor_initialization(self):

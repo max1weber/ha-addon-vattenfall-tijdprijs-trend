@@ -4,7 +4,7 @@
 
 DOMAIN = "vattenfall_tijdprijs"
 NAME = "Vattenfall Tijdprijs"
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 
 # Fixed costs configuration
 CONF_FIXED_DELIVERY = "fixed_delivery_costs"
